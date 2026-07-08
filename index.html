@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>人才库构成看板 | Talent Pool Dashboard</title>
+<style>
+  :root {
+    --bg: #f5f7fb;
+    --card-bg: #ffffff;
+    --primary: #4f46b5;
+    --accent: #ff5f9f;
+    --source: #1663d8;
+    --label: #008b82;
+    --text: #263238;
+    --sub: #68717d;
+    --muted: #a6afba;
+    --border: #e7ebf2;
+    --tag-bg: #f0edff;
+    --tag-text: #4f46b5;
+    --green: #00a884;
+    --orange: #f5a623;
+    --red: #e17055;
+    --blue: #4da3ff;
+    --shadow: 0 2px 14px rgba(20, 24, 40, 0.07);
+    --radius: 14px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, "Microsoft YaHei", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 32px 24px;
+    min-height: 100vh;
+  }
+
+  .header {
+    max-width: 1480px;
+    margin: 0 auto 24px;
+    display: grid;
+    gap: 16px;
+  }
+
+  h1 {
+    font-size: 30px;
+    font-weight: 780;
+    background: linear-gradient(135deg, var(--primary), #8f7cff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .quick-filters {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    width: 100%;
+  }
+
+  .filter-module {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px;
+    display: grid;
+    gap: 12px;
+  }
+
+  .filter-module-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    font-size: 16px;
+    font-weight: 760;
+  }
+
+  .filter-module-title.source { color: var(--source); }
+  .filter-module-title.label { color: var(--label); }
+
+  .filter-reset {
+    color: var(--sub);
+    font-size: 12px;
+    font-weight: 520;
+  }
+
+  .filter-group {
+    display: grid;
+    grid-template-columns: 78px 1fr;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .filter-label {
+    border-radius: 999px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 680;
+    padding: 6px 11px;
+    white-space: nowrap;
+  }
+
+  .filter-label.source { background: var(--source); }
+  .filter-label.label { background: var(--label); }
+
+  .filter-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .pill {
+    padding: 7px 15px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: #fff;
+    color: var(--sub);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all .2s;
+    white-space: nowrap;
+  }
+
+  .pill:hover,
+  .pill.active {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+    box-shadow: 0 2px 8px rgba(79, 70, 181, .28);
+  }
+
+  .stats-row {
+    max-width: 1480px;
+    margin: 0 auto 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 14px;
+  }
+
+  .stat-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
+
+  .stat-card .num {
+    color: var(--primary);
+    font-size: 30px;
+    font-weight: 780;
+  }
+
+  .stat-card .label {
+    color: var(--sub);
+    font-size: 13px;
+    margin-top: 4px;
+  }
+
+  .model-row {
+    max-width: 1480px;
+    margin: 0 auto 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .model-card {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 18px 20px;
+  }
+
+  .model-title {
+    color: var(--text);
+    font-size: 15px;
+    font-weight: 760;
+    margin-bottom: 12px;
+  }
+
+  .layer-list {
+    display: grid;
+    gap: 8px;
+  }
+
+  .layer-item {
+    display: grid;
+    grid-template-columns: 92px 1fr;
+    gap: 10px;
+    align-items: center;
+    color: var(--sub);
+    font-size: 13px;
+  }
+
+  .layer-name {
+    color: #fff;
+    border-radius: 999px;
+    padding: 5px 10px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 680;
+  }
+
+  .layer-name.source { background: var(--source); }
+  .layer-name.label { background: var(--label); }
+
+  .search-bar-wrap {
+    max-width: 1480px;
+    margin: 0 auto 20px;
+  }
+
+  .search-bar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    background: #fff;
+    border-radius: var(--radius);
+    padding: 10px 18px;
+    box-shadow: var(--shadow);
+  }
+
+  .search-bar input {
+    flex: 1;
+    border: none;
+    outline: none;
+    color: var(--text);
+    background: transparent;
+    font-size: 15px;
+  }
+
+  .search-bar input::placeholder { color: #b6bec9; }
+
+  .cards-grid {
+    max-width: 1480px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(440px, 1fr));
+    gap: 20px;
+  }
+
+  .talent-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: transform .2s, box-shadow .2s;
+    animation: fadeUp .4s ease both;
+  }
+
+  .talent-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 28px rgba(20, 24, 40, 0.11);
+  }
+
+  .talent-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--primary), var(--accent));
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+
+  .avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 780;
+    flex-shrink: 0;
+  }
+
+  .name {
+    font-size: 18px;
+    font-weight: 760;
+  }
+
+  .meta {
+    color: var(--sub);
+    font-size: 13px;
+    margin-top: 3px;
+  }
+
+  .badge {
+    margin-left: auto;
+    border-radius: 999px;
+    padding: 5px 11px;
+    font-size: 12px;
+    font-weight: 680;
+    white-space: nowrap;
+    background: #eaf8f6;
+    color: var(--label);
+  }
+
+  .section-label {
+    color: #9aa3af;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 680;
+    letter-spacing: .8px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  .section-label::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .chain {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .chain-row {
+    display: grid;
+    grid-template-columns: 74px 1fr;
+    gap: 10px;
+    align-items: center;
+    font-size: 13px;
+  }
+
+  .chain-key {
+    color: var(--muted);
+    text-align: right;
+  }
+
+  .chain-value {
+    color: var(--text);
+    font-weight: 640;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+
+  .tag {
+    border-radius: 14px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 570;
+    background: var(--tag-bg);
+    color: var(--tag-text);
+  }
+
+  .tag.source {
+    background: #edf4ff;
+    color: var(--source);
+  }
+
+  .tag.label {
+    background: #eaf8f6;
+    color: var(--label);
+  }
+
+  .score-bars { margin-bottom: 14px; }
+
+  .score-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 7px;
+  }
+
+  .score-name {
+    width: 56px;
+    color: var(--sub);
+    font-size: 12px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .bar-track {
+    flex: 1;
+    height: 8px;
+    background: #edf0f4;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width .4s;
+  }
+
+  .score-pct {
+    width: 34px;
+    color: #a3aab5;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+
+  .profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .profile-item {
+    background: #fafbfc;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 12px;
+    line-height: 1.55;
+  }
+
+  .profile-item strong {
+    display: block;
+    color: var(--sub);
+    font-size: 11px;
+    letter-spacing: .5px;
+    margin-bottom: 3px;
+  }
+
+  .empty {
+    max-width: 1480px;
+    margin: 18px auto;
+    padding: 32px;
+    color: var(--sub);
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
+
+  .footer {
+    color: #b7bec9;
+    text-align: center;
+    margin-top: 36px;
+    font-size: 12px;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 820px) {
+    body { padding: 24px 14px; }
+    .quick-filters { grid-template-columns: 1fr; }
+    .filter-group { grid-template-columns: 74px 1fr; }
+    .model-row { grid-template-columns: 1fr; }
+    .cards-grid { grid-template-columns: 1fr; }
+    .profile-grid { grid-template-columns: 1fr; }
+    h1 { font-size: 24px; }
+    .badge { margin-left: 0; }
+    .card-header { align-items: flex-start; flex-wrap: wrap; }
+  }
+
+  @media print {
+    body { background: #fff; padding: 0; }
+    .quick-filters, .stats-row, .search-bar-wrap, .model-row { display: none; }
+    .talent-card { break-inside: avoid; box-shadow: none; border: 1px solid #dde2ea; }
+  }
+</style>
+</head>
+<body>
+  <div class="header">
+    <div>
+      <h1>人才库构成看板</h1>
+    </div>
+    <div class="quick-filters" id="filterPills">
+      <div class="filter-module">
+        <div class="filter-module-title source">
+          <span>来源</span>
+          <button class="pill active" data-filter="all">全部</button>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label source">来源类型</span>
+          <div class="filter-options">
+            <button class="pill" data-filter="sourceType-internal">内部</button>
+            <button class="pill" data-filter="sourceType-external">外部</button>
+          </div>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label source">来源渠道</span>
+          <div class="filter-options">
+            <button class="pill" data-filter="channel-social">社招</button>
+            <button class="pill" data-filter="channel-campus">校招</button>
+          </div>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label source">职能岗位</span>
+          <div class="filter-options">
+            <button class="pill" data-filter="functionRole-marketing">市场</button>
+            <button class="pill" data-filter="functionRole-ecommerce">电商</button>
+            <button class="pill" data-filter="functionRole-sales">销售</button>
+            <button class="pill" data-filter="functionRole-supply">供应链</button>
+            <button class="pill" data-filter="functionRole-finance">财务</button>
+            <button class="pill" data-filter="functionRole-od">OD</button>
+          </div>
+        </div>
+      </div>
+      <div class="filter-module">
+        <div class="filter-module-title label">
+          <span>标签</span>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label label">人才类别</span>
+          <div class="filter-options">
+            <button class="pill" data-filter="category-potential">潜力</button>
+            <button class="pill" data-filter="category-highPotential">高潜</button>
+            <button class="pill" data-filter="category-backbone">骨干</button>
+            <button class="pill" data-filter="category-successor">继任</button>
+          </div>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label label">人才计划</span>
+          <div class="filter-options">
+            <button class="pill" data-filter="plan-cp">CP</button>
+            <button class="pill" data-filter="plan-fdr">FDR</button>
+            <button class="pill" data-filter="plan-mt">MT</button>
+            <button class="pill" data-filter="plan-department">部门计划</button>
+          </div>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label label">人才表现</span>
+          <div class="filter-options">
+            <button class="pill" data-filter="performance-highCreativity">高创造力</button>
+            <button class="pill" data-filter="performance-lowCreativity">低创造力</button>
+            <button class="pill" data-filter="performance-highOkr">高OKR</button>
+            <button class="pill" data-filter="performance-lowOkr">低OKR</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="num" id="countTotal">0</div><div class="label">人才总数</div></div>
+    <div class="stat-card"><div class="num" id="countInternal">0</div><div class="label">内部来源</div></div>
+    <div class="stat-card"><div class="num" id="countExternal">0</div><div class="label">外部来源</div></div>
+    <div class="stat-card"><div class="num" id="countHighPotential">0</div><div class="label">高潜人才</div></div>
+    <div class="stat-card"><div class="num" id="countSuccessor">0</div><div class="label">继任人才</div></div>
+    <div class="stat-card"><div class="num" id="countHighPerformance">0</div><div class="label">高创&高OKR</div></div>
+  </div>
+
+  <div class="model-row">
+    <div class="model-card">
+      <div class="model-title">来源维度：从外到内三层输入</div>
+      <div class="layer-list">
+        <div class="layer-item"><span class="layer-name source">来源类型</span><span>内部、外部</span></div>
+        <div class="layer-item"><span class="layer-name source">来源渠道</span><span>社招：行业/公司；校招：城市/院校</span></div>
+        <div class="layer-item"><span class="layer-name source">职能岗位</span><span>市场、电商、销售、供应链、财务、OD</span></div>
+      </div>
+    </div>
+    <div class="model-card">
+      <div class="model-title">标签维度：从外到内三层识别</div>
+      <div class="layer-list">
+        <div class="layer-item"><span class="layer-name label">人才类别</span><span>潜力、高潜、骨干、继任</span></div>
+        <div class="layer-item"><span class="layer-name label">人才计划</span><span>CP、FDR、MT、部门计划</span></div>
+        <div class="layer-item"><span class="layer-name label">人才表现</span><span>高/低创造力，高/低OKR</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="search-bar-wrap">
+    <div class="search-bar">
+      <span>🔍</span>
+      <input type="text" id="searchInput" placeholder="搜索姓名、岗位、来源渠道、人才计划、表现标签……">
+      <span style="font-size:12px;color:#b7bec9;" id="resultHint"></span>
+    </div>
+  </div>
+
+  <div class="cards-grid" id="cardsGrid"></div>
+  <div class="empty" id="emptyState" style="display:none;">没有匹配的人才，换个关键词或筛选条件试试。</div>
+
+  <div class="footer">人才库构成看板 · 来源维度输入 + 标签维度输入 · 本地单文件版本</div>
+
+<script>
+const AVATAR_COLORS = [
+  '#4f46b5', '#e17055', '#00a884', '#4da3ff', '#f5a623',
+  '#8f7cff', '#fd79a8', '#00bcd4', '#7c8da6', '#2d9c7c'
+];
+
+const SOURCE_TYPE_NAMES = { internal: '内部', external: '外部' };
+const CHANNEL_NAMES = { social: '社招', campus: '校招' };
+const FUNCTION_NAMES = {
+  marketing: '市场',
+  ecommerce: '电商',
+  sales: '销售',
+  supply: '供应链',
+  finance: '财务',
+  od: 'OD'
+};
+const CATEGORY_NAMES = {
+  potential: '潜力',
+  highPotential: '高潜',
+  backbone: '骨干',
+  successor: '继任'
+};
+const PLAN_NAMES = { cp: 'CP', fdr: 'FDR', mt: 'MT', department: '部门计划' };
+const PERFORMANCE_NAMES = {
+  highCreativity: '高创造力',
+  lowCreativity: '低创造力',
+  highOkr: '高OKR',
+  lowOkr: '低OKR'
+};
+
+const SCORE_KEYS = ['creativity', 'okr', 'readiness', 'mobility'];
+const SCORE_NAMES = { creativity: '创造力', okr: 'OKR', readiness: '成熟度', mobility: '流动性' };
+const SCORE_COLORS = { creativity: '#4f46b5', okr: '#00a884', readiness: '#e17055', mobility: '#4da3ff' };
+
+// 替换这里的数据，就能变成你的真实人才库。
+const talents = [
+  {
+    name: '李雨桐',
+    years: 6,
+    sourceType: 'internal',
+    channel: 'campus',
+    channelDetail: '上海985院校',
+    functionRole: 'ecommerce',
+    role: '高级产品经理',
+    category: 'highPotential',
+    plan: 'fdr',
+    performance: ['highCreativity', 'highOkr'],
+    scores: { creativity: 95, okr: 92, readiness: 86, mobility: 70 },
+    strength: '用户洞察敏锐，擅长通过数据驱动产品迭代。',
+    risk: '跨部门协同时偶尔过于直接。',
+    tagSummary: '高潜 × FDR × 创造力高 × OKR高',
+    sourceSummary: '内部 × 校招 × 上海985院校 × 电商岗位',
+    avatarColor: 0
+  },
+  {
+    name: '王语晴',
+    years: 7,
+    sourceType: 'internal',
+    channel: 'campus',
+    channelDetail: '985院校',
+    functionRole: 'marketing',
+    role: '整合营销经理',
+    category: 'successor',
+    plan: 'cp',
+    performance: ['highCreativity', 'highOkr'],
+    scores: { creativity: 88, okr: 94, readiness: 92, mobility: 82 },
+    strength: 'E2E全链路经验丰富，沟通表达能力突出。',
+    risk: '同时推进多个项目时精力分配不均。',
+    tagSummary: '继任 × CP × 创造力高 × OKR高',
+    sourceSummary: '内部 × 校招 × 985院校 × 市场岗位',
+    avatarColor: 1
+  },
+  {
+    name: '赵晨宇',
+    years: 4,
+    sourceType: 'external',
+    channel: 'social',
+    channelDetail: '互联网电商行业',
+    functionRole: 'ecommerce',
+    role: '电商运营主管',
+    category: 'backbone',
+    plan: 'department',
+    performance: ['lowCreativity', 'highOkr'],
+    scores: { creativity: 62, okr: 86, readiness: 78, mobility: 90 },
+    strength: '电商平台运营经验扎实，对流量玩法有独到见解。',
+    risk: '传统品牌建设方法论尚未形成体系。',
+    tagSummary: '骨干 × 部门计划 × 创造力低 × OKR高',
+    sourceSummary: '外部 × 社招行业 × 电商岗位',
+    avatarColor: 2
+  },
+  {
+    name: '陈思远',
+    years: 9,
+    sourceType: 'external',
+    channel: 'social',
+    channelDetail: '快消头部公司',
+    functionRole: 'sales',
+    role: '销售区域负责人',
+    category: 'successor',
+    plan: 'fdr',
+    performance: ['highCreativity', 'highOkr'],
+    scores: { creativity: 84, okr: 90, readiness: 91, mobility: 68 },
+    strength: '跨区域业务整合能力强，擅长从0到1搭建销售打法。',
+    risk: '对新消费内容渠道熟悉度有限。',
+    tagSummary: '继任 × FDR × 创造力高 × OKR高',
+    sourceSummary: '外部 × 社招公司 × 销售岗位',
+    avatarColor: 3
+  },
+  {
+    name: '林初夏',
+    years: 8,
+    sourceType: 'external',
+    channel: 'social',
+    channelDetail: '创意代理公司',
+    functionRole: 'marketing',
+    role: '创意总监',
+    category: 'highPotential',
+    plan: 'department',
+    performance: ['highCreativity', 'lowOkr'],
+    scores: { creativity: 96, okr: 68, readiness: 80, mobility: 76 },
+    strength: '创意爆款制造能力突出，曾主导多个刷屏级campaign。',
+    risk: '对ROI的把控有时让位于创意追求。',
+    tagSummary: '高潜 × 部门计划 × 创造力高 × OKR低',
+    sourceSummary: '外部 × 社招 × 创意代理公司 × 市场岗位',
+    avatarColor: 4
+  },
+  {
+    name: '吴若曦',
+    years: 10,
+    sourceType: 'internal',
+    channel: 'social',
+    channelDetail: 'OD行业',
+    functionRole: 'od',
+    role: '消费者洞察总监',
+    category: 'backbone',
+    plan: 'cp',
+    performance: ['lowCreativity', 'highOkr'],
+    scores: { creativity: 74, okr: 89, readiness: 87, mobility: 64 },
+    strength: '深耕消费者研究，定性定量方法论扎实。',
+    risk: '节奏偏慢，在快速变化的营销环境中偶尔滞后。',
+    tagSummary: '骨干 × CP × 创造力低 × OKR高',
+    sourceSummary: '内部 × 社招 × OD行业 × OD岗位',
+    avatarColor: 5
+  },
+  {
+    name: '郑晴天',
+    years: 6,
+    sourceType: 'external',
+    channel: 'campus',
+    channelDetail: '上海重点院校',
+    functionRole: 'finance',
+    role: '商业分析经理',
+    category: 'potential',
+    plan: 'mt',
+    performance: ['highCreativity', 'lowOkr'],
+    scores: { creativity: 82, okr: 70, readiness: 72, mobility: 88 },
+    strength: '财务建模和经营分析基础好，学习速度快。',
+    risk: '独立牵头复杂业务议题的经验仍需积累。',
+    tagSummary: '潜力 × MT × 创造力高 × OKR低',
+    sourceSummary: '外部 × 校招院校 × 财务岗位',
+    avatarColor: 6
+  },
+  {
+    name: '孙嘉禾',
+    years: 3,
+    sourceType: 'external',
+    channel: 'campus',
+    channelDetail: '杭州高校',
+    functionRole: 'supply',
+    role: '供应链管培生',
+    category: 'potential',
+    plan: 'mt',
+    performance: ['lowCreativity', 'lowOkr'],
+    scores: { creativity: 66, okr: 72, readiness: 61, mobility: 93 },
+    strength: '学习能力强，对供应链计划和流程改善有兴趣。',
+    risk: '业务历练较浅，需要导师和轮岗机制支持。',
+    tagSummary: '潜力 × MT × 创造力低 × OKR低',
+    sourceSummary: '外部 × 校招城市 × 供应链岗位',
+    avatarColor: 7
+  }
+];
+
+function renderCard(t) {
+  const sourceTags = [
+    SOURCE_TYPE_NAMES[t.sourceType],
+    CHANNEL_NAMES[t.channel],
+    t.channelDetail,
+    FUNCTION_NAMES[t.functionRole]
+  ].map(v => `<span class="tag source">${v}</span>`).join('');
+
+  const labelTags = [
+    CATEGORY_NAMES[t.category],
+    PLAN_NAMES[t.plan],
+    ...t.performance.map(k => PERFORMANCE_NAMES[k])
+  ].map(v => `<span class="tag label">${v}</span>`).join('');
+
+  const scoreBars = SCORE_KEYS.map(k => {
+    const v = t.scores[k] || 0;
+    return `
+      <div class="score-row">
+        <span class="score-name">${SCORE_NAMES[k]}</span>
+        <div class="bar-track"><div class="bar-fill" style="width:${v}%;background:${SCORE_COLORS[k]};"></div></div>
+        <span class="score-pct">${v}%</span>
+      </div>`;
+  }).join('');
+
+  const searchText = [
+    t.name, t.role, t.years, SOURCE_TYPE_NAMES[t.sourceType], CHANNEL_NAMES[t.channel],
+    t.channelDetail, FUNCTION_NAMES[t.functionRole], CATEGORY_NAMES[t.category],
+    PLAN_NAMES[t.plan], ...t.performance.map(k => PERFORMANCE_NAMES[k]),
+    t.sourceSummary, t.tagSummary, t.strength, t.risk
+  ].join(' ');
+
+  return `
+    <div class="talent-card" data-search="${searchText}">
+      <div class="card-header">
+        <div class="avatar" style="background:${AVATAR_COLORS[t.avatarColor % AVATAR_COLORS.length]};">${t.name.charAt(0)}</div>
+        <div>
+          <div class="name">${t.name} <span style="font-size:12px;color:#a3aab5;font-weight:400;">${t.years}年</span></div>
+          <div class="meta">📌 ${t.role}</div>
+        </div>
+        <span class="badge">${CATEGORY_NAMES[t.category]} · ${PLAN_NAMES[t.plan]}</span>
+      </div>
+
+      <div class="section-label">来源维度</div>
+      <div class="chain">
+        <div class="chain-row"><span class="chain-key">来源类型</span><span class="chain-value">${SOURCE_TYPE_NAMES[t.sourceType]}</span></div>
+        <div class="chain-row"><span class="chain-key">来源渠道</span><span class="chain-value">${CHANNEL_NAMES[t.channel]} · ${t.channelDetail}</span></div>
+        <div class="chain-row"><span class="chain-key">职能岗位</span><span class="chain-value">${FUNCTION_NAMES[t.functionRole]} · ${t.role}</span></div>
+      </div>
+      <div class="tags">${sourceTags}</div>
+
+      <div class="section-label">标签维度</div>
+      <div class="chain">
+        <div class="chain-row"><span class="chain-key">人才类别</span><span class="chain-value">${CATEGORY_NAMES[t.category]}</span></div>
+        <div class="chain-row"><span class="chain-key">人才计划</span><span class="chain-value">${PLAN_NAMES[t.plan]}</span></div>
+        <div class="chain-row"><span class="chain-key">人才表现</span><span class="chain-value">${t.performance.map(k => PERFORMANCE_NAMES[k]).join(' / ')}</span></div>
+      </div>
+      <div class="tags">${labelTags}</div>
+
+      <div class="section-label">表现评分</div>
+      <div class="score-bars">${scoreBars}</div>
+
+      <div class="section-label">组合画像</div>
+      <div class="profile-grid">
+        <div class="profile-item"><strong>来源组合</strong>${t.sourceSummary}</div>
+        <div class="profile-item"><strong>标签组合</strong>${t.tagSummary}</div>
+        <div class="profile-item"><strong>优势</strong>${t.strength}</div>
+        <div class="profile-item"><strong>风险</strong>${t.risk}</div>
+      </div>
+    </div>`;
+}
+
+let activeFilter = 'all';
+let searchTerm = '';
+
+function matchFilter(t) {
+  if (activeFilter === 'all') return true;
+
+  const [group, value] = activeFilter.split('-');
+  if (group === 'sourceType') return t.sourceType === value;
+  if (group === 'channel') return t.channel === value;
+  if (group === 'functionRole') return t.functionRole === value;
+  if (group === 'category') return t.category === value;
+  if (group === 'plan') return t.plan === value;
+  if (group === 'performance') return t.performance.includes(value);
+  return true;
+}
+
+function applyFilters() {
+  let result = talents.filter(matchFilter);
+
+  if (searchTerm.trim()) {
+    const s = searchTerm.trim().toLowerCase();
+    result = result.filter(t => {
+      const text = [
+        t.name, t.role, SOURCE_TYPE_NAMES[t.sourceType], CHANNEL_NAMES[t.channel],
+        t.channelDetail, FUNCTION_NAMES[t.functionRole], CATEGORY_NAMES[t.category],
+        PLAN_NAMES[t.plan], ...t.performance.map(k => PERFORMANCE_NAMES[k]),
+        t.sourceSummary, t.tagSummary, t.strength, t.risk
+      ].join(' ').toLowerCase();
+      return text.includes(s);
+    });
+  }
+
+  renderAll(result);
+}
+
+function renderAll(list) {
+  const grid = document.getElementById('cardsGrid');
+  const empty = document.getElementById('emptyState');
+  grid.innerHTML = list.map(renderCard).join('');
+  grid.style.display = list.length ? 'grid' : 'none';
+  empty.style.display = list.length ? 'none' : 'block';
+  document.getElementById('resultHint').textContent =
+    list.length === talents.length ? '' : `显示 ${list.length} / ${talents.length} 人`;
+  updateStats(list);
+}
+
+function updateStats(list) {
+  document.getElementById('countTotal').textContent = list.length;
+  document.getElementById('countInternal').textContent = list.filter(t => t.sourceType === 'internal').length;
+  document.getElementById('countExternal').textContent = list.filter(t => t.sourceType === 'external').length;
+  document.getElementById('countHighPotential').textContent = list.filter(t => t.category === 'highPotential').length;
+  document.getElementById('countSuccessor').textContent = list.filter(t => t.category === 'successor').length;
+  document.getElementById('countHighPerformance').textContent =
+    list.filter(t => t.performance.includes('highCreativity') && t.performance.includes('highOkr')).length;
+}
+
+document.querySelectorAll('#filterPills .pill').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#filterPills .pill').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.filter;
+    applyFilters();
+  });
+});
+
+document.getElementById('searchInput').addEventListener('input', e => {
+  searchTerm = e.target.value;
+  applyFilters();
+});
+
+renderAll(talents);
+</script>
+</body>
+</html>
