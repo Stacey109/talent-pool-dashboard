@@ -52,6 +52,36 @@
     background-clip: text;
   }
 
+  .title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .action-btn {
+    border: none;
+    border-radius: 10px;
+    background: var(--primary);
+    color: #fff;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 680;
+    padding: 9px 14px;
+    transition: all .2s;
+  }
+
+  .action-btn:hover { box-shadow: 0 4px 12px rgba(79, 70, 181, .28); }
+  .action-btn.secondary { background: #fff; color: var(--primary); border: 1px solid var(--border); }
+  .action-btn.danger { background: #fff1ee; color: var(--red); border: 1px solid #ffd8d0; }
+
   .quick-filters {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -208,6 +238,136 @@
 
   .layer-name.source { background: var(--source); }
   .layer-name.label { background: var(--label); }
+
+  .admin-panel {
+    max-width: 1480px;
+    margin: 0 auto 20px;
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 18px;
+    display: none;
+  }
+
+  .admin-panel.open { display: block; }
+
+  .admin-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .admin-head h2 {
+    font-size: 18px;
+    color: var(--text);
+  }
+
+  .admin-note {
+    color: var(--sub);
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
+  .admin-layout {
+    display: grid;
+    grid-template-columns: minmax(220px, 300px) 1fr;
+    gap: 16px;
+  }
+
+  .admin-list {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .admin-list-item {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    background: #fff;
+    color: var(--text);
+    cursor: pointer;
+    display: block;
+    padding: 11px 12px;
+    text-align: left;
+  }
+
+  .admin-list-item:last-child { border-bottom: none; }
+  .admin-list-item:hover,
+  .admin-list-item.active { background: #f4f2ff; color: var(--primary); }
+
+  .admin-form {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .field {
+    display: grid;
+    gap: 6px;
+  }
+
+  .field.wide { grid-column: span 2; }
+  .field.full { grid-column: 1 / -1; }
+
+  .field label {
+    color: var(--sub);
+    font-size: 12px;
+    font-weight: 680;
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font: inherit;
+    padding: 9px 10px;
+    outline: none;
+    background: #fff;
+  }
+
+  .field textarea {
+    min-height: 76px;
+    resize: vertical;
+  }
+
+  .checkbox-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    min-height: 40px;
+  }
+
+  .checkbox-row label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text);
+    font-weight: 520;
+  }
+
+  .score-inputs {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .admin-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    padding-top: 4px;
+  }
 
   .search-bar-wrap {
     max-width: 1480px;
@@ -468,6 +628,10 @@
     .quick-filters { grid-template-columns: 1fr; }
     .filter-group { grid-template-columns: 74px 1fr; }
     .model-row { grid-template-columns: 1fr; }
+    .admin-layout { grid-template-columns: 1fr; }
+    .admin-form { grid-template-columns: 1fr; }
+    .field.wide { grid-column: 1; }
+    .score-inputs { grid-template-columns: 1fr; }
     .cards-grid { grid-template-columns: 1fr; }
     .profile-grid { grid-template-columns: 1fr; }
     h1 { font-size: 24px; }
@@ -484,8 +648,12 @@
 </head>
 <body>
   <div class="header">
-    <div>
+    <div class="title-row">
       <h1>人才库构成看板</h1>
+      <div class="header-actions">
+        <button class="action-btn" id="toggleAdminBtn">数据维护</button>
+        <button class="action-btn secondary" id="exportBtn">导出JSON</button>
+      </div>
     </div>
     <div class="quick-filters" id="filterPills">
       <div class="filter-module">
@@ -551,6 +719,125 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div class="admin-panel" id="adminPanel">
+    <div class="admin-head">
+      <div>
+        <h2>后台数据维护</h2>
+        <p class="admin-note">修改会自动保存到当前浏览器；要同步给其他人，请导出 JSON 后统一更新发布数据。</p>
+      </div>
+      <div class="header-actions">
+        <button class="action-btn secondary" id="newTalentBtn">新增人才</button>
+        <button class="action-btn secondary" id="importBtn">导入JSON</button>
+        <input type="file" id="importFile" accept="application/json,.json" style="display:none;">
+        <button class="action-btn danger" id="resetDataBtn">恢复示例数据</button>
+      </div>
+    </div>
+    <div class="admin-layout">
+      <div class="admin-list" id="adminList"></div>
+      <form class="admin-form" id="adminForm">
+        <input type="hidden" id="talentIndex">
+        <div class="field">
+          <label for="nameInput">姓名</label>
+          <input id="nameInput" required>
+        </div>
+        <div class="field">
+          <label for="yearsInput">年限</label>
+          <input id="yearsInput" type="number" min="0" max="40" required>
+        </div>
+        <div class="field wide">
+          <label for="roleInput">岗位</label>
+          <input id="roleInput" required>
+        </div>
+        <div class="field">
+          <label for="sourceTypeInput">来源类型</label>
+          <select id="sourceTypeInput">
+            <option value="internal">内部</option>
+            <option value="external">外部</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="channelInput">来源渠道</label>
+          <select id="channelInput">
+            <option value="social">社招</option>
+            <option value="campus">校招</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="channelDetailInput">渠道细分</label>
+          <input id="channelDetailInput" placeholder="行业/公司/城市/院校">
+        </div>
+        <div class="field">
+          <label for="functionRoleInput">职能岗位</label>
+          <select id="functionRoleInput">
+            <option value="marketing">市场</option>
+            <option value="ecommerce">电商</option>
+            <option value="sales">销售</option>
+            <option value="supply">供应链</option>
+            <option value="finance">财务</option>
+            <option value="od">OD</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="categoryInput">人才类别</label>
+          <select id="categoryInput">
+            <option value="potential">潜力</option>
+            <option value="highPotential">高潜</option>
+            <option value="backbone">骨干</option>
+            <option value="successor">继任</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="planInput">人才计划</label>
+          <select id="planInput">
+            <option value="cp">CP</option>
+            <option value="fdr">FDR</option>
+            <option value="mt">MT</option>
+            <option value="department">部门计划</option>
+          </select>
+        </div>
+        <div class="field wide">
+          <label>人才表现</label>
+          <div class="checkbox-row">
+            <label><input type="checkbox" name="performanceInput" value="highCreativity">高创造力</label>
+            <label><input type="checkbox" name="performanceInput" value="lowCreativity">低创造力</label>
+            <label><input type="checkbox" name="performanceInput" value="highOkr">高OKR</label>
+            <label><input type="checkbox" name="performanceInput" value="lowOkr">低OKR</label>
+          </div>
+        </div>
+        <div class="score-inputs">
+          <div class="field">
+            <label for="creativityInput">创造力评分</label>
+            <input id="creativityInput" type="number" min="0" max="100">
+          </div>
+          <div class="field">
+            <label for="okrInput">OKR评分</label>
+            <input id="okrInput" type="number" min="0" max="100">
+          </div>
+          <div class="field">
+            <label for="readinessInput">成熟度评分</label>
+            <input id="readinessInput" type="number" min="0" max="100">
+          </div>
+          <div class="field">
+            <label for="mobilityInput">流动性评分</label>
+            <input id="mobilityInput" type="number" min="0" max="100">
+          </div>
+        </div>
+        <div class="field full">
+          <label for="strengthInput">优势</label>
+          <textarea id="strengthInput"></textarea>
+        </div>
+        <div class="field full">
+          <label for="riskInput">风险</label>
+          <textarea id="riskInput"></textarea>
+        </div>
+        <div class="admin-actions">
+          <button class="action-btn danger" type="button" id="deleteTalentBtn">删除</button>
+          <button class="action-btn" type="submit">保存人才</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -629,8 +916,10 @@ const SCORE_KEYS = ['creativity', 'okr', 'readiness', 'mobility'];
 const SCORE_NAMES = { creativity: '创造力', okr: 'OKR', readiness: '成熟度', mobility: '流动性' };
 const SCORE_COLORS = { creativity: '#4f46b5', okr: '#00a884', readiness: '#e17055', mobility: '#4da3ff' };
 
-// 替换这里的数据，就能变成你的真实人才库。
-const talents = [
+const STORAGE_KEY = 'talentPoolDashboardData';
+
+// 默认示例数据。后台维护的数据会优先从浏览器本地存储读取。
+const DEFAULT_TALENTS = [
   {
     name: '李雨桐',
     years: 6,
@@ -777,19 +1066,111 @@ const talents = [
   }
 ];
 
+let talents = loadTalents();
+let activeTalentIndex = 0;
+
+function loadTalents() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return cloneTalents(DEFAULT_TALENTS);
+    const parsed = JSON.parse(saved);
+    return Array.isArray(parsed) ? parsed.map(normalizeTalent) : cloneTalents(DEFAULT_TALENTS);
+  } catch (err) {
+    return cloneTalents(DEFAULT_TALENTS);
+  }
+}
+
+function cloneTalents(list) {
+  return JSON.parse(JSON.stringify(list)).map(normalizeTalent);
+}
+
+function saveTalents() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(talents, null, 2));
+}
+
+function clampScore(value) {
+  const num = Number(value);
+  if (Number.isNaN(num)) return 0;
+  return Math.max(0, Math.min(100, num));
+}
+
+function normalizeTalent(t, index = 0) {
+  const sourceType = SOURCE_TYPE_NAMES[t.sourceType] ? t.sourceType : 'external';
+  const channel = CHANNEL_NAMES[t.channel] ? t.channel : 'social';
+  const functionRole = FUNCTION_NAMES[t.functionRole] ? t.functionRole : 'marketing';
+  const category = CATEGORY_NAMES[t.category] ? t.category : 'potential';
+  const plan = PLAN_NAMES[t.plan] ? t.plan : 'department';
+  const performance = Array.isArray(t.performance)
+    ? t.performance.filter(k => PERFORMANCE_NAMES[k])
+    : ['highCreativity', 'highOkr'];
+  const safePerformance = performance.length ? performance : ['highCreativity', 'highOkr'];
+
+  const talent = {
+    name: String(t.name || '未命名人才').trim(),
+    years: Number(t.years || 0),
+    sourceType,
+    channel,
+    channelDetail: String(t.channelDetail || '').trim(),
+    functionRole,
+    role: String(t.role || '').trim(),
+    category,
+    plan,
+    performance: safePerformance,
+    scores: {
+      creativity: clampScore(t.scores?.creativity),
+      okr: clampScore(t.scores?.okr),
+      readiness: clampScore(t.scores?.readiness),
+      mobility: clampScore(t.scores?.mobility)
+    },
+    strength: String(t.strength || '').trim(),
+    risk: String(t.risk || '').trim(),
+    avatarColor: Number.isInteger(t.avatarColor) ? t.avatarColor : index
+  };
+  talent.sourceSummary = makeSourceSummary(talent);
+  talent.tagSummary = makeTagSummary(talent);
+  return talent;
+}
+
+function makeSourceSummary(t) {
+  return [
+    SOURCE_TYPE_NAMES[t.sourceType],
+    CHANNEL_NAMES[t.channel],
+    t.channelDetail,
+    `${FUNCTION_NAMES[t.functionRole]}岗位`
+  ].filter(Boolean).join(' × ');
+}
+
+function makeTagSummary(t) {
+  return [
+    CATEGORY_NAMES[t.category],
+    PLAN_NAMES[t.plan],
+    ...t.performance.map(k => PERFORMANCE_NAMES[k])
+  ].filter(Boolean).join(' × ');
+}
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[ch]));
+}
+
 function renderCard(t) {
   const sourceTags = [
     SOURCE_TYPE_NAMES[t.sourceType],
     CHANNEL_NAMES[t.channel],
     t.channelDetail,
     FUNCTION_NAMES[t.functionRole]
-  ].map(v => `<span class="tag source">${v}</span>`).join('');
+  ].map(v => `<span class="tag source">${escapeHtml(v)}</span>`).join('');
 
   const labelTags = [
     CATEGORY_NAMES[t.category],
     PLAN_NAMES[t.plan],
     ...t.performance.map(k => PERFORMANCE_NAMES[k])
-  ].map(v => `<span class="tag label">${v}</span>`).join('');
+  ].map(v => `<span class="tag label">${escapeHtml(v)}</span>`).join('');
 
   const scoreBars = SCORE_KEYS.map(k => {
     const v = t.scores[k] || 0;
@@ -809,12 +1190,12 @@ function renderCard(t) {
   ].join(' ');
 
   return `
-    <div class="talent-card" data-search="${searchText}">
+    <div class="talent-card" data-search="${escapeHtml(searchText)}">
       <div class="card-header">
-        <div class="avatar" style="background:${AVATAR_COLORS[t.avatarColor % AVATAR_COLORS.length]};">${t.name.charAt(0)}</div>
+        <div class="avatar" style="background:${AVATAR_COLORS[t.avatarColor % AVATAR_COLORS.length]};">${escapeHtml(t.name.charAt(0))}</div>
         <div>
-          <div class="name">${t.name} <span style="font-size:12px;color:#a3aab5;font-weight:400;">${t.years}年</span></div>
-          <div class="meta">📌 ${t.role}</div>
+          <div class="name">${escapeHtml(t.name)} <span style="font-size:12px;color:#a3aab5;font-weight:400;">${escapeHtml(t.years)}年</span></div>
+          <div class="meta">📌 ${escapeHtml(t.role)}</div>
         </div>
         <span class="badge">${CATEGORY_NAMES[t.category]} · ${PLAN_NAMES[t.plan]}</span>
       </div>
@@ -822,8 +1203,8 @@ function renderCard(t) {
       <div class="section-label">来源维度</div>
       <div class="chain">
         <div class="chain-row"><span class="chain-key">来源类型</span><span class="chain-value">${SOURCE_TYPE_NAMES[t.sourceType]}</span></div>
-        <div class="chain-row"><span class="chain-key">来源渠道</span><span class="chain-value">${CHANNEL_NAMES[t.channel]} · ${t.channelDetail}</span></div>
-        <div class="chain-row"><span class="chain-key">职能岗位</span><span class="chain-value">${FUNCTION_NAMES[t.functionRole]} · ${t.role}</span></div>
+        <div class="chain-row"><span class="chain-key">来源渠道</span><span class="chain-value">${CHANNEL_NAMES[t.channel]} · ${escapeHtml(t.channelDetail)}</span></div>
+        <div class="chain-row"><span class="chain-key">职能岗位</span><span class="chain-value">${FUNCTION_NAMES[t.functionRole]} · ${escapeHtml(t.role)}</span></div>
       </div>
       <div class="tags">${sourceTags}</div>
 
@@ -840,10 +1221,10 @@ function renderCard(t) {
 
       <div class="section-label">组合画像</div>
       <div class="profile-grid">
-        <div class="profile-item"><strong>来源组合</strong>${t.sourceSummary}</div>
-        <div class="profile-item"><strong>标签组合</strong>${t.tagSummary}</div>
-        <div class="profile-item"><strong>优势</strong>${t.strength}</div>
-        <div class="profile-item"><strong>风险</strong>${t.risk}</div>
+        <div class="profile-item"><strong>来源组合</strong>${escapeHtml(t.sourceSummary)}</div>
+        <div class="profile-item"><strong>标签组合</strong>${escapeHtml(t.tagSummary)}</div>
+        <div class="profile-item"><strong>优势</strong>${escapeHtml(t.strength)}</div>
+        <div class="profile-item"><strong>风险</strong>${escapeHtml(t.risk)}</div>
       </div>
     </div>`;
 }
@@ -904,6 +1285,186 @@ function updateStats(list) {
     list.filter(t => t.performance.includes('highCreativity') && t.performance.includes('highOkr')).length;
 }
 
+function blankTalent() {
+  return normalizeTalent({
+    name: '新人才',
+    years: 0,
+    sourceType: 'external',
+    channel: 'social',
+    channelDetail: '',
+    functionRole: 'marketing',
+    role: '',
+    category: 'potential',
+    plan: 'department',
+    performance: ['highCreativity', 'highOkr'],
+    scores: { creativity: 80, okr: 80, readiness: 70, mobility: 70 },
+    strength: '',
+    risk: '',
+    avatarColor: talents.length
+  }, talents.length);
+}
+
+function renderAdminList() {
+  const list = document.getElementById('adminList');
+  list.innerHTML = talents.map((t, index) => `
+    <button class="admin-list-item ${index === activeTalentIndex ? 'active' : ''}" type="button" data-index="${index}">
+      <strong>${escapeHtml(t.name)}</strong><br>
+      <span style="font-size:12px;color:#8a93a3;">${escapeHtml(t.role || '未填写岗位')} · ${CATEGORY_NAMES[t.category]} · ${PLAN_NAMES[t.plan]}</span>
+    </button>
+  `).join('');
+
+  list.querySelectorAll('.admin-list-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeTalentIndex = Number(btn.dataset.index);
+      fillAdminForm(activeTalentIndex);
+      renderAdminList();
+    });
+  });
+}
+
+function setValue(id, value) {
+  document.getElementById(id).value = value ?? '';
+}
+
+function fillAdminForm(index) {
+  if (!talents.length) {
+    talents.push(blankTalent());
+    activeTalentIndex = 0;
+  }
+  const t = talents[index] || talents[0];
+  setValue('talentIndex', index);
+  setValue('nameInput', t.name);
+  setValue('yearsInput', t.years);
+  setValue('roleInput', t.role);
+  setValue('sourceTypeInput', t.sourceType);
+  setValue('channelInput', t.channel);
+  setValue('channelDetailInput', t.channelDetail);
+  setValue('functionRoleInput', t.functionRole);
+  setValue('categoryInput', t.category);
+  setValue('planInput', t.plan);
+  setValue('creativityInput', t.scores.creativity);
+  setValue('okrInput', t.scores.okr);
+  setValue('readinessInput', t.scores.readiness);
+  setValue('mobilityInput', t.scores.mobility);
+  setValue('strengthInput', t.strength);
+  setValue('riskInput', t.risk);
+  document.querySelectorAll('input[name="performanceInput"]').forEach(input => {
+    input.checked = t.performance.includes(input.value);
+  });
+}
+
+function readAdminForm() {
+  const performance = [...document.querySelectorAll('input[name="performanceInput"]:checked')]
+    .map(input => input.value);
+  const index = Number(document.getElementById('talentIndex').value || activeTalentIndex);
+  const current = talents[index] || {};
+  return normalizeTalent({
+    name: document.getElementById('nameInput').value,
+    years: document.getElementById('yearsInput').value,
+    role: document.getElementById('roleInput').value,
+    sourceType: document.getElementById('sourceTypeInput').value,
+    channel: document.getElementById('channelInput').value,
+    channelDetail: document.getElementById('channelDetailInput').value,
+    functionRole: document.getElementById('functionRoleInput').value,
+    category: document.getElementById('categoryInput').value,
+    plan: document.getElementById('planInput').value,
+    performance,
+    scores: {
+      creativity: document.getElementById('creativityInput').value,
+      okr: document.getElementById('okrInput').value,
+      readiness: document.getElementById('readinessInput').value,
+      mobility: document.getElementById('mobilityInput').value
+    },
+    strength: document.getElementById('strengthInput').value,
+    risk: document.getElementById('riskInput').value,
+    avatarColor: current.avatarColor ?? index
+  }, index);
+}
+
+function refreshDashboard() {
+  saveTalents();
+  renderAdminList();
+  fillAdminForm(Math.min(activeTalentIndex, talents.length - 1));
+  applyFilters();
+}
+
+function exportTalents() {
+  const data = JSON.stringify(talents, null, 2);
+  const blob = new Blob([data], { type: 'application/json;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `talent-pool-${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function importTalents(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const parsed = JSON.parse(reader.result);
+      if (!Array.isArray(parsed)) throw new Error('JSON 顶层必须是数组');
+      talents = parsed.map(normalizeTalent);
+      activeTalentIndex = 0;
+      refreshDashboard();
+      alert('导入成功');
+    } catch (err) {
+      alert(`导入失败：${err.message}`);
+    }
+  };
+  reader.readAsText(file, 'utf-8');
+}
+
+function initAdmin() {
+  renderAdminList();
+  fillAdminForm(activeTalentIndex);
+
+  document.getElementById('toggleAdminBtn').addEventListener('click', () => {
+    document.getElementById('adminPanel').classList.toggle('open');
+  });
+
+  document.getElementById('exportBtn').addEventListener('click', exportTalents);
+  document.getElementById('importBtn').addEventListener('click', () => document.getElementById('importFile').click());
+  document.getElementById('importFile').addEventListener('change', e => {
+    const file = e.target.files?.[0];
+    if (file) importTalents(file);
+    e.target.value = '';
+  });
+
+  document.getElementById('newTalentBtn').addEventListener('click', () => {
+    talents.push(blankTalent());
+    activeTalentIndex = talents.length - 1;
+    refreshDashboard();
+    document.getElementById('adminPanel').classList.add('open');
+  });
+
+  document.getElementById('deleteTalentBtn').addEventListener('click', () => {
+    if (!talents.length) return;
+    const t = talents[activeTalentIndex];
+    if (!confirm(`确认删除 ${t.name} 吗？`)) return;
+    talents.splice(activeTalentIndex, 1);
+    if (!talents.length) talents.push(blankTalent());
+    activeTalentIndex = Math.max(0, Math.min(activeTalentIndex, talents.length - 1));
+    refreshDashboard();
+  });
+
+  document.getElementById('resetDataBtn').addEventListener('click', () => {
+    if (!confirm('确认恢复示例数据？当前浏览器里的维护数据会被覆盖。')) return;
+    talents = cloneTalents(DEFAULT_TALENTS);
+    activeTalentIndex = 0;
+    refreshDashboard();
+  });
+
+  document.getElementById('adminForm').addEventListener('submit', e => {
+    e.preventDefault();
+    talents[activeTalentIndex] = readAdminForm();
+    refreshDashboard();
+  });
+}
+
 document.querySelectorAll('#filterPills .pill').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('#filterPills .pill').forEach(b => b.classList.remove('active'));
@@ -918,6 +1479,7 @@ document.getElementById('searchInput').addEventListener('input', e => {
   applyFilters();
 });
 
+initAdmin();
 renderAll(talents);
 </script>
 </body>
