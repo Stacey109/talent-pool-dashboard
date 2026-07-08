@@ -191,54 +191,6 @@
     margin-top: 4px;
   }
 
-  .model-row {
-    max-width: 1480px;
-    margin: 0 auto 20px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-
-  .model-card {
-    background: #fff;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 18px 20px;
-  }
-
-  .model-title {
-    color: var(--text);
-    font-size: 15px;
-    font-weight: 760;
-    margin-bottom: 12px;
-  }
-
-  .layer-list {
-    display: grid;
-    gap: 8px;
-  }
-
-  .layer-item {
-    display: grid;
-    grid-template-columns: 92px 1fr;
-    gap: 10px;
-    align-items: center;
-    color: var(--sub);
-    font-size: 13px;
-  }
-
-  .layer-name {
-    color: #fff;
-    border-radius: 999px;
-    padding: 5px 10px;
-    text-align: center;
-    font-size: 12px;
-    font-weight: 680;
-  }
-
-  .layer-name.source { background: var(--source); }
-  .layer-name.label { background: var(--label); }
-
   .admin-panel {
     max-width: 1480px;
     margin: 0 auto 20px;
@@ -627,7 +579,6 @@
     body { padding: 24px 14px; }
     .quick-filters { grid-template-columns: 1fr; }
     .filter-group { grid-template-columns: 74px 1fr; }
-    .model-row { grid-template-columns: 1fr; }
     .admin-layout { grid-template-columns: 1fr; }
     .admin-form { grid-template-columns: 1fr; }
     .field.wide { grid-column: 1; }
@@ -641,7 +592,7 @@
 
   @media print {
     body { background: #fff; padding: 0; }
-    .quick-filters, .stats-row, .search-bar-wrap, .model-row { display: none; }
+    .quick-filters, .stats-row, .search-bar-wrap { display: none; }
     .talent-card { break-inside: avoid; box-shadow: none; border: 1px solid #dde2ea; }
   }
 </style>
@@ -850,25 +801,6 @@
     <div class="stat-card"><div class="num" id="countHighPerformance">0</div><div class="label">高创&高OKR</div></div>
   </div>
 
-  <div class="model-row">
-    <div class="model-card">
-      <div class="model-title">来源维度：从外到内三层输入</div>
-      <div class="layer-list">
-        <div class="layer-item"><span class="layer-name source">来源类型</span><span>内部、外部</span></div>
-        <div class="layer-item"><span class="layer-name source">来源渠道</span><span>社招：行业/公司；校招：城市/院校</span></div>
-        <div class="layer-item"><span class="layer-name source">职能岗位</span><span>市场、电商、销售、供应链、财务、OD</span></div>
-      </div>
-    </div>
-    <div class="model-card">
-      <div class="model-title">标签维度：从外到内三层识别</div>
-      <div class="layer-list">
-        <div class="layer-item"><span class="layer-name label">人才类别</span><span>潜力、高潜、骨干、继任</span></div>
-        <div class="layer-item"><span class="layer-name label">人才计划</span><span>CP、FDR、MT、部门计划</span></div>
-        <div class="layer-item"><span class="layer-name label">人才表现</span><span>高/低创造力，高/低OKR</span></div>
-      </div>
-    </div>
-  </div>
-
   <div class="search-bar-wrap">
     <div class="search-bar">
       <span>🔍</span>
@@ -880,7 +812,7 @@
   <div class="cards-grid" id="cardsGrid"></div>
   <div class="empty" id="emptyState" style="display:none;">没有匹配的人才，换个关键词或筛选条件试试。</div>
 
-  <div class="footer">人才库构成看板 · 来源维度输入 + 标签维度输入 · 本地单文件版本</div>
+  <div class="footer">人才库构成看板 · 本地单文件版本</div>
 
 <script>
 const AVATAR_COLORS = [
@@ -1200,7 +1132,7 @@ function renderCard(t) {
         <span class="badge">${CATEGORY_NAMES[t.category]} · ${PLAN_NAMES[t.plan]}</span>
       </div>
 
-      <div class="section-label">来源维度</div>
+      <div class="section-label">来源</div>
       <div class="chain">
         <div class="chain-row"><span class="chain-key">来源类型</span><span class="chain-value">${SOURCE_TYPE_NAMES[t.sourceType]}</span></div>
         <div class="chain-row"><span class="chain-key">来源渠道</span><span class="chain-value">${CHANNEL_NAMES[t.channel]} · ${escapeHtml(t.channelDetail)}</span></div>
@@ -1208,7 +1140,7 @@ function renderCard(t) {
       </div>
       <div class="tags">${sourceTags}</div>
 
-      <div class="section-label">标签维度</div>
+      <div class="section-label">标签</div>
       <div class="chain">
         <div class="chain-row"><span class="chain-key">人才类别</span><span class="chain-value">${CATEGORY_NAMES[t.category]}</span></div>
         <div class="chain-row"><span class="chain-key">人才计划</span><span class="chain-value">${PLAN_NAMES[t.plan]}</span></div>
