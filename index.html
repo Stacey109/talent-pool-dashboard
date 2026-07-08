@@ -680,6 +680,7 @@
         <p class="admin-note">修改会自动保存到当前浏览器；要同步给其他人，请导出 JSON 后统一更新发布数据。</p>
       </div>
       <div class="header-actions">
+        <button class="action-btn" id="backToDashboardBtn">返回看板</button>
         <button class="action-btn secondary" id="newTalentBtn">新增人才</button>
         <button class="action-btn secondary" id="importBtn">导入JSON</button>
         <input type="file" id="importFile" accept="application/json,.json" style="display:none;">
@@ -1356,6 +1357,11 @@ function initAdmin() {
 
   document.getElementById('toggleAdminBtn').addEventListener('click', () => {
     document.getElementById('adminPanel').classList.toggle('open');
+  });
+
+  document.getElementById('backToDashboardBtn').addEventListener('click', () => {
+    document.getElementById('adminPanel').classList.remove('open');
+    document.getElementById('cardsGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
   document.getElementById('exportBtn').addEventListener('click', exportTalents);
