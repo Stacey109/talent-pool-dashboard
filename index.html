@@ -191,6 +191,134 @@
     margin-top: 4px;
   }
 
+  .analytics-row {
+    max-width: 1480px;
+    margin: 0 auto 20px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .chart-card {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 18px;
+    min-height: 430px;
+  }
+
+  .chart-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .chart-title {
+    color: var(--text);
+    font-size: 17px;
+    font-weight: 760;
+  }
+
+  .chart-subtitle {
+    color: var(--sub);
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
+  .chart-badge {
+    border-radius: 999px;
+    background: #f0edff;
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 680;
+    padding: 6px 10px;
+    white-space: nowrap;
+  }
+
+  .chart-body {
+    min-height: 340px;
+  }
+
+  .chart-body svg {
+    width: 100%;
+    height: 340px;
+    display: block;
+  }
+
+  .matrix-cell {
+    fill: #fbfcff;
+    stroke: #e3e9f2;
+    stroke-width: 1;
+  }
+
+  .matrix-cell.hot { fill: #f0fff8; }
+  .matrix-cell.warn { fill: #fff8ec; }
+  .matrix-cell.risk { fill: #fff2ef; }
+
+  .chart-axis-label {
+    fill: #68717d;
+    font-size: 12px;
+    font-weight: 680;
+  }
+
+  .chart-small-label {
+    fill: #8a94a3;
+    font-size: 10px;
+  }
+
+  .person-dot {
+    stroke: #fff;
+    stroke-width: 2;
+  }
+
+  .person-label {
+    fill: #263238;
+    font-size: 10px;
+    font-weight: 680;
+  }
+
+  .radar-grid {
+    fill: none;
+    stroke: #dce3ee;
+    stroke-width: 1;
+  }
+
+  .radar-axis {
+    stroke: #e5ebf3;
+    stroke-width: 1;
+  }
+
+  .radar-label {
+    fill: #68717d;
+    font-size: 11px;
+    font-weight: 680;
+  }
+
+  .radar-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    color: var(--sub);
+    font-size: 12px;
+    margin-top: 2px;
+  }
+
+  .legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .legend-swatch {
+    width: 18px;
+    height: 8px;
+    border-radius: 999px;
+    display: inline-block;
+  }
+
   .admin-panel {
     max-width: 1480px;
     margin: 0 auto 20px;
@@ -583,6 +711,7 @@
     .admin-form { grid-template-columns: 1fr; }
     .field.wide { grid-column: 1; }
     .score-inputs { grid-template-columns: 1fr; }
+    .analytics-row { grid-template-columns: 1fr; }
     .cards-grid { grid-template-columns: 1fr; }
     .profile-grid { grid-template-columns: 1fr; }
     h1 { font-size: 24px; }
@@ -802,6 +931,30 @@
     <div class="stat-card"><div class="num" id="countHighPerformance">0</div><div class="label">高创&高OKR</div></div>
   </div>
 
+  <div class="analytics-row">
+    <div class="chart-card">
+      <div class="chart-head">
+        <div>
+          <div class="chart-title">九宫格人才分布</div>
+          <div class="chart-subtitle">横轴：OKR达成；纵轴：创造力。每个点代表一名人才。</div>
+        </div>
+        <span class="chart-badge" id="matrixCount">0人</span>
+      </div>
+      <div class="chart-body" id="matrixChart"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-head">
+        <div>
+          <div class="chart-title">团队能力雷达图</div>
+          <div class="chart-subtitle">展示团队平均水平与重点人才的能力画像对比。</div>
+        </div>
+        <span class="chart-badge">多人对比</span>
+      </div>
+      <div class="chart-body" id="radarChart"></div>
+      <div class="radar-legend" id="radarLegend"></div>
+    </div>
+  </div>
+
   <div class="search-bar-wrap">
     <div class="search-bar">
       <span>🔍</span>
@@ -848,6 +1001,16 @@ const PERFORMANCE_NAMES = {
 const SCORE_KEYS = ['creativity', 'okr', 'readiness', 'mobility'];
 const SCORE_NAMES = { creativity: '创造力', okr: 'OKR', readiness: '成熟度', mobility: '流动性' };
 const SCORE_COLORS = { creativity: '#4f46b5', okr: '#00a884', readiness: '#e17055', mobility: '#4da3ff' };
+const CHART_COLORS = ['#2f6bdc', '#5b4cc4', '#9b35d7', '#e037a3', '#d93a72', '#00a884', '#f5a623'];
+const RADAR_AXES = [
+  { key: 'user', name: '用户为本', get: t => Math.round((t.scores.creativity + t.scores.readiness) / 2) },
+  { key: 'application', name: '应用水平', get: t => Math.round((t.scores.okr + t.scores.readiness) / 2) },
+  { key: 'learning', name: '学习速度', get: t => Math.round((t.scores.creativity + t.scores.mobility) / 2) },
+  { key: 'resilience', name: '韧性', get: t => t.scores.mobility },
+  { key: 'drive', name: '自驱', get: t => Math.round((t.scores.okr + t.scores.mobility) / 2) },
+  { key: 'execution', name: '知行致用', get: t => t.scores.okr },
+  { key: 'efficiency', name: '简单高效', get: t => t.scores.readiness }
+];
 
 const STORAGE_KEY = 'talentPoolDashboardData';
 
@@ -1091,6 +1254,171 @@ function escapeHtml(value) {
   }[ch]));
 }
 
+function scoreBand(value) {
+  if (value >= 80) return '高';
+  if (value >= 60) return '中';
+  return '低';
+}
+
+function averageScore(t) {
+  return Math.round((t.scores.creativity + t.scores.okr + t.scores.readiness + t.scores.mobility) / 4);
+}
+
+function polarPoint(cx, cy, radius, angle, value) {
+  const r = radius * (value / 100);
+  return {
+    x: cx + Math.cos(angle) * r,
+    y: cy + Math.sin(angle) * r
+  };
+}
+
+function pointsToString(points) {
+  return points.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+}
+
+function renderMatrix(list) {
+  const host = document.getElementById('matrixChart');
+  document.getElementById('matrixCount').textContent = `${list.length}人`;
+  const width = 640;
+  const height = 340;
+  const left = 72;
+  const top = 32;
+  const size = 246;
+  const cell = size / 3;
+  const axisY = top + size + 28;
+  const axisX = left - 34;
+  const cellNames = [
+    ['低创低绩', '中绩低创', '高绩低创'],
+    ['低绩中创', '稳定贡献', '高绩中创'],
+    ['潜力待转化', '高创中绩', '明星人才']
+  ];
+
+  const cellSvg = [];
+  for (let row = 0; row < 3; row++) {
+    for (let col = 0; col < 3; col++) {
+      const cls = row === 0 && col === 2 ? 'hot' : row === 2 && col === 0 ? 'risk' : row === 0 || col === 0 ? 'warn' : '';
+      const x = left + col * cell;
+      const y = top + row * cell;
+      const label = cellNames[2 - row][col];
+      cellSvg.push(`
+        <rect class="matrix-cell ${cls}" x="${x}" y="${y}" width="${cell}" height="${cell}" rx="8"></rect>
+        <text class="chart-small-label" x="${x + cell / 2}" y="${y + 20}" text-anchor="middle">${label}</text>
+      `);
+    }
+  }
+
+  const grouped = new Map();
+  const dots = list.map((t, index) => {
+    const okr = clampScore(t.scores.okr);
+    const creativity = clampScore(t.scores.creativity);
+    const key = `${Math.floor(okr / 4)}-${Math.floor(creativity / 4)}`;
+    const offset = grouped.get(key) || 0;
+    grouped.set(key, offset + 1);
+    const jitter = ((offset % 5) - 2) * 6;
+    const x = left + (okr / 100) * size + jitter;
+    const y = top + size - (creativity / 100) * size + Math.floor(offset / 5) * 6;
+    const color = CHART_COLORS[index % CHART_COLORS.length];
+    return `
+      <g>
+        <circle class="person-dot" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="8" fill="${color}">
+          <title>${escapeHtml(t.name)}｜OKR ${okr}｜创造力 ${creativity}</title>
+        </circle>
+        <text class="person-label" x="${(x + 11).toFixed(1)}" y="${(y + 4).toFixed(1)}">${escapeHtml(t.name)}</text>
+      </g>
+    `;
+  }).join('');
+
+  host.innerHTML = `
+    <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="OKR与创造力九宫格">
+      ${cellSvg.join('')}
+      <line x1="${left}" y1="${top + size}" x2="${left + size}" y2="${top + size}" stroke="#cfd8e6" stroke-width="1.5"></line>
+      <line x1="${left}" y1="${top}" x2="${left}" y2="${top + size}" stroke="#cfd8e6" stroke-width="1.5"></line>
+      <text class="chart-axis-label" x="${left + size / 2}" y="${axisY}" text-anchor="middle">OKR达成</text>
+      <text class="chart-axis-label" x="${axisX}" y="${top + size / 2}" text-anchor="middle" transform="rotate(-90 ${axisX} ${top + size / 2})">创造力</text>
+      <text class="chart-small-label" x="${left}" y="${axisY - 22}" text-anchor="middle">低</text>
+      <text class="chart-small-label" x="${left + size / 2}" y="${axisY - 22}" text-anchor="middle">中</text>
+      <text class="chart-small-label" x="${left + size}" y="${axisY - 22}" text-anchor="middle">高</text>
+      <text class="chart-small-label" x="${left - 18}" y="${top + size}" text-anchor="middle">低</text>
+      <text class="chart-small-label" x="${left - 18}" y="${top + size / 2}" text-anchor="middle">中</text>
+      <text class="chart-small-label" x="${left - 18}" y="${top + 4}" text-anchor="middle">高</text>
+      ${dots || `<text class="chart-axis-label" x="${left + size / 2}" y="${top + size / 2}" text-anchor="middle">暂无数据</text>`}
+      <text class="chart-small-label" x="390" y="72">规则：80分以上为高，60-79分为中，60分以下为低</text>
+      <text class="chart-small-label" x="390" y="96">当前位置随筛选结果实时刷新</text>
+    </svg>
+  `;
+}
+
+function radarValues(t) {
+  return RADAR_AXES.map(axis => axis.get(t));
+}
+
+function renderRadar(list) {
+  const host = document.getElementById('radarChart');
+  const legend = document.getElementById('radarLegend');
+  const width = 640;
+  const height = 340;
+  const cx = 320;
+  const cy = 165;
+  const radius = 116;
+  const angleStep = (Math.PI * 2) / RADAR_AXES.length;
+  const start = -Math.PI / 2;
+
+  const grid = [20, 40, 60, 80, 100].map(level => {
+    const pts = RADAR_AXES.map((_, i) => polarPoint(cx, cy, radius, start + i * angleStep, level));
+    return `<polygon class="radar-grid" points="${pointsToString(pts)}"></polygon>`;
+  }).join('');
+
+  const axes = RADAR_AXES.map((axis, i) => {
+    const angle = start + i * angleStep;
+    const end = polarPoint(cx, cy, radius, angle, 100);
+    const label = polarPoint(cx, cy, radius + 32, angle, 100);
+    return `
+      <line class="radar-axis" x1="${cx}" y1="${cy}" x2="${end.x.toFixed(1)}" y2="${end.y.toFixed(1)}"></line>
+      <text class="radar-label" x="${label.x.toFixed(1)}" y="${label.y.toFixed(1)}" text-anchor="middle">${axis.name}</text>
+    `;
+  }).join('');
+
+  const ordered = [...list].sort((a, b) => averageScore(b) - averageScore(a));
+  const selected = ordered.slice(0, 5);
+  const averageTalent = list.length ? {
+    name: '团队平均',
+    scores: {
+      creativity: Math.round(list.reduce((s, t) => s + t.scores.creativity, 0) / list.length),
+      okr: Math.round(list.reduce((s, t) => s + t.scores.okr, 0) / list.length),
+      readiness: Math.round(list.reduce((s, t) => s + t.scores.readiness, 0) / list.length),
+      mobility: Math.round(list.reduce((s, t) => s + t.scores.mobility, 0) / list.length)
+    }
+  } : null;
+
+  const series = averageTalent ? [averageTalent, ...selected] : [];
+  const polygons = series.map((t, idx) => {
+    const color = idx === 0 ? '#2f6bdc' : CHART_COLORS[(idx + 1) % CHART_COLORS.length];
+    const values = radarValues(t);
+    const pts = values.map((v, i) => polarPoint(cx, cy, radius, start + i * angleStep, v));
+    const fillOpacity = idx === 0 ? 0.14 : 0.06;
+    const strokeWidth = idx === 0 ? 3 : 2;
+    const markers = pts.map(p => `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3" fill="${color}"></circle>`).join('');
+    return `
+      <g>
+        <polygon points="${pointsToString(pts)}" fill="${color}" fill-opacity="${fillOpacity}" stroke="${color}" stroke-width="${strokeWidth}"></polygon>
+        ${markers}
+      </g>
+    `;
+  }).join('');
+
+  host.innerHTML = `
+    <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="团队能力雷达图">
+      ${grid}
+      ${axes}
+      ${polygons || `<text class="chart-axis-label" x="${cx}" y="${cy}" text-anchor="middle">暂无数据</text>`}
+    </svg>
+  `;
+  legend.innerHTML = series.map((t, idx) => {
+    const color = idx === 0 ? '#2f6bdc' : CHART_COLORS[(idx + 1) % CHART_COLORS.length];
+    return `<span class="legend-item"><span class="legend-swatch" style="background:${color}"></span>${escapeHtml(t.name)}</span>`;
+  }).join('');
+}
+
 function renderCard(t) {
   const sourceTags = [
     SOURCE_TYPE_NAMES[t.sourceType],
@@ -1206,6 +1534,8 @@ function renderAll(list) {
   document.getElementById('resultHint').textContent =
     list.length === talents.length ? '' : `显示 ${list.length} / ${talents.length} 人`;
   updateStats(list);
+  renderMatrix(list);
+  renderRadar(list);
 }
 
 function updateStats(list) {
