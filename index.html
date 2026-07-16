@@ -971,12 +971,20 @@
             <input id="mobilityInput" type="number" min="0" max="100">
           </div>
         </div>
-        <div class="field full">
-          <label for="strengthInput">优势</label>
-          <textarea id="strengthInput"></textarea>
+        <div class="field wide">
+          <label for="creativityStrengthInput">优势（创造力高分项）</label>
+          <textarea id="creativityStrengthInput"></textarea>
         </div>
-        <div class="field full">
-          <label for="riskInput">风险</label>
+        <div class="field wide">
+          <label for="creativityWeaknessInput">待提升项（创造力薄弱项）</label>
+          <textarea id="creativityWeaknessInput"></textarea>
+        </div>
+        <div class="field wide">
+          <label for="developmentAdviceInput">发展建议</label>
+          <textarea id="developmentAdviceInput"></textarea>
+        </div>
+        <div class="field wide">
+          <label for="riskInput">风险点</label>
           <textarea id="riskInput"></textarea>
         </div>
         <div class="admin-actions">
@@ -1096,7 +1104,10 @@ const DEFAULT_TALENTS = [
     performance: ['highCreativity', 'highOkr'],
     scores: { creativity: 94, okr: 93, readiness: 88, mobility: 72 },
     strength: '用户洞察敏锐，擅长通过数据驱动产品迭代。',
-    risk: '跨部门协同时偶尔过于直接。',
+    creativityStrength: '能从用户痛点中提炼产品机会，擅长用数据验证假设并快速迭代方案。',
+    creativityWeakness: '创意表达偏产品语言，对品牌化叙事和跨圈层传播包装还可加强。',
+    developmentAdvice: '安排品牌/内容项目共创，提升从产品洞察到市场表达的转化能力。',
+    risk: '跨部门协同时偶尔过于直接，需注意影响力表达方式。',
     tagSummary: '高潜 × FDR × 创造力高 × OKR高',
     sourceSummary: '内部 × 校招 × 上海985院校 × 电商岗位',
     avatarColor: 0
@@ -1114,7 +1125,10 @@ const DEFAULT_TALENTS = [
     performance: ['highCreativity', 'highOkr'],
     scores: { creativity: 76, okr: 95, readiness: 93, mobility: 68 },
     strength: 'E2E全链路经验丰富，沟通表达能力突出。',
-    risk: '同时推进多个项目时精力分配不均。',
+    creativityStrength: '擅长整合多方资源，把复杂项目拆解成清晰路径并形成可落地方案。',
+    creativityWeakness: '在高压多项目并行时，容易优先保证交付，对探索性创意投入不足。',
+    developmentAdvice: '减少并行项目数量，配置高价值创新课题，训练优先级判断和创意沉淀。',
+    risk: '同时推进多个项目时精力分配不均，可能影响关键项目深度。',
     tagSummary: '继任 × CP × 创造力高 × OKR高',
     sourceSummary: '内部 × 校招 × 985院校 × 市场岗位',
     avatarColor: 1
@@ -1132,7 +1146,10 @@ const DEFAULT_TALENTS = [
     performance: ['lowCreativity', 'highOkr'],
     scores: { creativity: 52, okr: 88, readiness: 78, mobility: 86 },
     strength: '电商平台运营经验扎实，对流量玩法有独到见解。',
-    risk: '传统品牌建设方法论尚未形成体系。',
+    creativityStrength: '善于从平台规则和流量变化中找到运营机会，执行转化意识强。',
+    creativityWeakness: '偏短期打法，用户洞察和品牌长期心智建设的创意能力较弱。',
+    developmentAdvice: '参与品牌年度战役复盘，补齐从流量策略到品牌资产沉淀的方法论。',
+    risk: '传统品牌建设方法论尚未形成体系，独立承担品牌型项目存在风险。',
     tagSummary: '骨干 × 部门计划 × 创造力低 × OKR高',
     sourceSummary: '外部 × 社招行业 × 电商岗位',
     avatarColor: 2
@@ -1150,7 +1167,10 @@ const DEFAULT_TALENTS = [
     performance: ['highCreativity', 'highOkr'],
     scores: { creativity: 67, okr: 82, readiness: 92, mobility: 58 },
     strength: '跨区域业务整合能力强，擅长从0到1搭建销售打法。',
-    risk: '对新消费内容渠道熟悉度有限。',
+    creativityStrength: '能把区域市场差异转化为销售打法，擅长设计可复制的业务机制。',
+    creativityWeakness: '内容化、社媒化的新消费表达相对保守，创新触点不够丰富。',
+    developmentAdvice: '安排与数字营销团队共创渠道创新项目，提升新场景打法设计能力。',
+    risk: '对新消费内容渠道熟悉度有限，可能影响新兴市场拓展速度。',
     tagSummary: '继任 × FDR × 创造力高 × OKR高',
     sourceSummary: '外部 × 社招公司 × 销售岗位',
     avatarColor: 3
@@ -1168,7 +1188,10 @@ const DEFAULT_TALENTS = [
     performance: ['highCreativity', 'lowOkr'],
     scores: { creativity: 97, okr: 54, readiness: 70, mobility: 80 },
     strength: '创意爆款制造能力突出，曾主导多个刷屏级campaign。',
-    risk: '对ROI的把控有时让位于创意追求。',
+    creativityStrength: '审美敏锐，想象力强，善于制造传播记忆点和情绪共鸣。',
+    creativityWeakness: '创意与业务指标的连接不够稳定，商业化约束下的取舍能力需加强。',
+    developmentAdvice: '建立campaign前置ROI假设和复盘机制，用业务指标约束创意选择。',
+    risk: '对ROI的把控有时让位于创意追求，需加强商业结果闭环。',
     tagSummary: '高潜 × 部门计划 × 创造力高 × OKR低',
     sourceSummary: '外部 × 社招 × 创意代理公司 × 市场岗位',
     avatarColor: 4
@@ -1186,6 +1209,9 @@ const DEFAULT_TALENTS = [
     performance: ['lowCreativity', 'highOkr'],
     scores: { creativity: 58, okr: 73, readiness: 90, mobility: 52 },
     strength: '深耕消费者研究，定性定量方法论扎实。',
+    creativityStrength: '能从研究样本中发现深层需求，洞察质量稳定，判断较稳健。',
+    creativityWeakness: '输出节奏偏谨慎，面对快速试错型场景时创意响应速度不足。',
+    developmentAdvice: '引入轻量洞察模板和快速验证机制，提升从研究到行动的速度。',
     risk: '节奏偏慢，在快速变化的营销环境中偶尔滞后。',
     tagSummary: '骨干 × CP × 创造力低 × OKR高',
     sourceSummary: '内部 × 社招 × OD行业 × OD岗位',
@@ -1204,6 +1230,9 @@ const DEFAULT_TALENTS = [
     performance: ['highCreativity', 'lowOkr'],
     scores: { creativity: 86, okr: 62, readiness: 66, mobility: 94 },
     strength: '财务建模和经营分析基础好，学习速度快。',
+    creativityStrength: '能用数据重构问题，善于发现经营指标背后的异常与机会。',
+    creativityWeakness: '创意更多停留在分析建议层，对推动跨部门方案落地经验不足。',
+    developmentAdvice: '参与经营改善专项，从分析角色延展到方案设计和推动角色。',
     risk: '独立牵头复杂业务议题的经验仍需积累。',
     tagSummary: '潜力 × MT × 创造力高 × OKR低',
     sourceSummary: '外部 × 校招院校 × 财务岗位',
@@ -1222,6 +1251,9 @@ const DEFAULT_TALENTS = [
     performance: ['lowCreativity', 'lowOkr'],
     scores: { creativity: 48, okr: 45, readiness: 58, mobility: 91 },
     strength: '学习能力强，对供应链计划和流程改善有兴趣。',
+    creativityStrength: '对流程问题敏感，愿意主动学习工具和方法，改善意识较强。',
+    creativityWeakness: '业务场景积累不足，创意多为局部优化，系统性方案设计能力较弱。',
+    developmentAdvice: '安排轮岗和导师制，先从小型流程改善项目积累完整闭环经验。',
     risk: '业务历练较浅，需要导师和轮岗机制支持。',
     tagSummary: '潜力 × MT × 创造力低 × OKR低',
     sourceSummary: '外部 × 校招城市 × 供应链岗位',
@@ -1290,6 +1322,9 @@ function normalizeTalent(t, index = 0) {
       mobility: clampScore(t.scores?.mobility)
     },
     strength: String(t.strength || '').trim(),
+    creativityStrength: String(t.creativityStrength || t.strength || defaultCreativityStrength(t)).trim(),
+    creativityWeakness: String(t.creativityWeakness || defaultCreativityWeakness(t)).trim(),
+    developmentAdvice: String(t.developmentAdvice || defaultDevelopmentAdvice(t)).trim(),
     risk: String(t.risk || '').trim(),
     avatarColor: Number.isInteger(t.avatarColor) ? t.avatarColor : index
   };
@@ -1313,6 +1348,31 @@ function makeTagSummary(t) {
     PLAN_NAMES[t.plan],
     ...t.performance.map(k => PERFORMANCE_NAMES[k])
   ].filter(Boolean).join(' × ');
+}
+
+function defaultCreativityStrength(t) {
+  const creativity = clampScore(t.scores?.creativity);
+  if (creativity >= 80) return '创造力表现突出，能够主动提出新想法并推动方案成型。';
+  if (creativity >= 60) return '具备一定创新意识，能够在既有框架内提出优化建议。';
+  return '执行稳定，能够在明确任务和方法支持下完成改善动作。';
+}
+
+function defaultCreativityWeakness(t) {
+  const creativity = clampScore(t.scores?.creativity);
+  const okr = clampScore(t.scores?.okr);
+  if (creativity >= 80 && okr < 60) return '创意落地和结果转化不足，需要加强目标拆解与业务闭环。';
+  if (creativity < 60 && okr >= 80) return '偏执行和结果导向，原创方案、跨场景迁移和主动破题能力不足。';
+  if (creativity < 60) return '创造力基础较弱，对复杂问题的重新定义和方案设计能力需要提升。';
+  return '创意稳定性和差异化表达仍有提升空间，需要形成可复用的方法。';
+}
+
+function defaultDevelopmentAdvice(t) {
+  const creativity = clampScore(t.scores?.creativity);
+  const okr = clampScore(t.scores?.okr);
+  if (creativity >= 80 && okr >= 80) return '给予更高复杂度的创新项目，沉淀方法论并带教团队复制经验。';
+  if (creativity >= 80 && okr < 60) return '配置业务导师，建立创意方案的指标假设、里程碑和复盘机制。';
+  if (creativity < 60 && okr >= 80) return '安排跨职能共创和开放式课题训练，提升从执行到方案设计的能力。';
+  return '从小型改善项目开始，明确目标、方法和复盘节奏，逐步提升完整闭环能力。';
 }
 
 function escapeHtml(value) {
@@ -1605,7 +1665,7 @@ function renderCard(t) {
     t.name, t.role, t.years, SOURCE_TYPE_NAMES[t.sourceType], CHANNEL_NAMES[t.channel],
     t.channelDetail, FUNCTION_NAMES[t.functionRole], CATEGORY_NAMES[t.category],
     PLAN_NAMES[t.plan], ...t.performance.map(k => PERFORMANCE_NAMES[k]),
-    t.sourceSummary, t.tagSummary, t.strength, t.risk
+    t.creativityStrength, t.creativityWeakness, t.developmentAdvice, t.risk
   ].join(' ');
 
   return `
@@ -1651,12 +1711,12 @@ function renderCard(t) {
         </div>
       </div>
 
-      <div class="section-label">组合画像</div>
+      <div class="section-label">发展诊断</div>
       <div class="profile-grid">
-        <div class="profile-item"><strong>来源组合</strong>${escapeHtml(t.sourceSummary)}</div>
-        <div class="profile-item"><strong>标签组合</strong>${escapeHtml(t.tagSummary)}</div>
-        <div class="profile-item"><strong>优势</strong>${escapeHtml(t.strength)}</div>
-        <div class="profile-item"><strong>风险</strong>${escapeHtml(t.risk)}</div>
+        <div class="profile-item"><strong>优势（创造力高分项）</strong>${escapeHtml(t.creativityStrength)}</div>
+        <div class="profile-item"><strong>待提升项（创造力薄弱项）</strong>${escapeHtml(t.creativityWeakness)}</div>
+        <div class="profile-item"><strong>发展建议</strong>${escapeHtml(t.developmentAdvice)}</div>
+        <div class="profile-item"><strong>风险点</strong>${escapeHtml(t.risk)}</div>
       </div>
     </div>`;
 }
@@ -1687,7 +1747,7 @@ function applyFilters() {
         t.name, t.role, SOURCE_TYPE_NAMES[t.sourceType], CHANNEL_NAMES[t.channel],
         t.channelDetail, FUNCTION_NAMES[t.functionRole], CATEGORY_NAMES[t.category],
         PLAN_NAMES[t.plan], ...t.performance.map(k => PERFORMANCE_NAMES[k]),
-        t.sourceSummary, t.tagSummary, t.strength, t.risk
+        t.creativityStrength, t.creativityWeakness, t.developmentAdvice, t.risk
       ].join(' ').toLowerCase();
       return text.includes(s);
     });
@@ -1733,6 +1793,9 @@ function blankTalent() {
     performance: ['highCreativity', 'highOkr'],
     scores: { creativity: 80, okr: 80, readiness: 70, mobility: 70 },
     strength: '',
+    creativityStrength: '',
+    creativityWeakness: '',
+    developmentAdvice: '',
     risk: '',
     avatarColor: talents.length
   }, talents.length);
@@ -1780,7 +1843,9 @@ function fillAdminForm(index) {
   setValue('okrInput', t.scores.okr);
   setValue('readinessInput', t.scores.readiness);
   setValue('mobilityInput', t.scores.mobility);
-  setValue('strengthInput', t.strength);
+  setValue('creativityStrengthInput', t.creativityStrength);
+  setValue('creativityWeaknessInput', t.creativityWeakness);
+  setValue('developmentAdviceInput', t.developmentAdvice);
   setValue('riskInput', t.risk);
   document.querySelectorAll('input[name="performanceInput"]').forEach(input => {
     input.checked = t.performance.includes(input.value);
@@ -1809,7 +1874,10 @@ function readAdminForm() {
       readiness: document.getElementById('readinessInput').value,
       mobility: document.getElementById('mobilityInput').value
     },
-    strength: document.getElementById('strengthInput').value,
+    strength: document.getElementById('creativityStrengthInput').value,
+    creativityStrength: document.getElementById('creativityStrengthInput').value,
+    creativityWeakness: document.getElementById('creativityWeaknessInput').value,
+    developmentAdvice: document.getElementById('developmentAdviceInput').value,
     risk: document.getElementById('riskInput').value,
     avatarColor: current.avatarColor ?? index
   }, index);
