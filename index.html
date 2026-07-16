@@ -972,11 +972,11 @@
           </div>
         </div>
         <div class="field wide">
-          <label for="creativityStrengthInput">优势（创造力高分项）</label>
+          <label for="creativityStrengthInput">优势</label>
           <textarea id="creativityStrengthInput"></textarea>
         </div>
         <div class="field wide">
-          <label for="creativityWeaknessInput">待提升项（创造力薄弱项）</label>
+          <label for="creativityWeaknessInput">待提升项</label>
           <textarea id="creativityWeaknessInput"></textarea>
         </div>
         <div class="field wide">
@@ -1419,9 +1419,9 @@ function renderMatrix(list) {
   const axisY = top + size + 28;
   const axisX = left - 34;
   const cellNames = [
-    ['低创低绩', '中绩低创', '高绩低创'],
-    ['低绩中创', '稳定贡献', '高绩中创'],
-    ['潜力待转化', '高创中绩', '明星人才']
+    ['重点改善型', '执行稳定型', '结果驱动型'],
+    ['激活提升型', '稳健贡献型', '高效突破型'],
+    ['创新潜力型', '创新成长型', '创新引领型']
   ];
 
   const cellSvg = [];
@@ -1487,15 +1487,15 @@ function matrixPositionName(t) {
   const x = scoreBand(t.scores.okr);
   const y = scoreBand(t.scores.creativity);
   const names = {
-    '高-高': '明星人才',
-    '高-中': '高绩中创',
-    '高-低': '高绩低创',
-    '中-高': '高创中绩',
-    '中-中': '稳定贡献',
-    '中-低': '中绩低创',
-    '低-高': '潜力待转化',
-    '低-中': '低绩中创',
-    '低-低': '待改进'
+    '高-高': '创新引领型',
+    '高-中': '高效突破型',
+    '高-低': '结果驱动型',
+    '中-高': '创新成长型',
+    '中-中': '稳健贡献型',
+    '中-低': '执行稳定型',
+    '低-高': '创新潜力型',
+    '低-中': '激活提升型',
+    '低-低': '重点改善型'
   };
   return names[`${x}-${y}`] || `${x}OKR / ${y}创造力`;
 }
@@ -1713,8 +1713,8 @@ function renderCard(t) {
 
       <div class="section-label">发展诊断</div>
       <div class="profile-grid">
-        <div class="profile-item"><strong>优势（创造力高分项）</strong>${escapeHtml(t.creativityStrength)}</div>
-        <div class="profile-item"><strong>待提升项（创造力薄弱项）</strong>${escapeHtml(t.creativityWeakness)}</div>
+        <div class="profile-item"><strong>优势</strong>${escapeHtml(t.creativityStrength)}</div>
+        <div class="profile-item"><strong>待提升项</strong>${escapeHtml(t.creativityWeakness)}</div>
         <div class="profile-item"><strong>发展建议</strong>${escapeHtml(t.developmentAdvice)}</div>
         <div class="profile-item"><strong>风险点</strong>${escapeHtml(t.risk)}</div>
       </div>
