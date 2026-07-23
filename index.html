@@ -834,10 +834,9 @@
         <div class="filter-group">
           <span class="filter-label label">人才类别</span>
           <div class="filter-options">
-            <button class="pill" data-filter="category-potential">潜力</button>
-            <button class="pill" data-filter="category-highPotential">高潜</button>
-            <button class="pill" data-filter="category-backbone">骨干</button>
-            <button class="pill" data-filter="category-successor">继任</button>
+            <button class="pill" data-filter="category-keyTalent">关键人才</button>
+            <button class="pill" data-filter="category-highPotential">高潜人才</button>
+            <button class="pill" data-filter="category-successor">继任人才</button>
           </div>
         </div>
         <div class="filter-group">
@@ -924,10 +923,9 @@
         <div class="field">
           <label for="categoryInput">人才类别</label>
           <select id="categoryInput">
-            <option value="potential">潜力</option>
-            <option value="highPotential">高潜</option>
-            <option value="backbone">骨干</option>
-            <option value="successor">继任</option>
+            <option value="keyTalent">关键人才</option>
+            <option value="highPotential">高潜人才</option>
+            <option value="successor">继任人才</option>
           </select>
         </div>
         <div class="field">
@@ -994,9 +992,9 @@
     <div class="stat-card"><div class="num" id="countTotal">0</div><div class="label">人才总数</div></div>
     <div class="stat-card"><div class="num" id="countInternal">0</div><div class="label">内部来源</div></div>
     <div class="stat-card"><div class="num" id="countExternal">0</div><div class="label">外部来源</div></div>
+    <div class="stat-card"><div class="num" id="countKeyTalent">0</div><div class="label">关键人才</div></div>
     <div class="stat-card"><div class="num" id="countHighPotential">0</div><div class="label">高潜人才</div></div>
     <div class="stat-card"><div class="num" id="countSuccessor">0</div><div class="label">继任人才</div></div>
-    <div class="stat-card"><div class="num" id="countHighPerformance">0</div><div class="label">高创&高OKR</div></div>
   </div>
 
   <div class="analytics-row">
@@ -1053,10 +1051,9 @@ const FUNCTION_NAMES = {
   od: 'OD'
 };
 const CATEGORY_NAMES = {
-  potential: '潜力',
-  highPotential: '高潜',
-  backbone: '骨干',
-  successor: '继任'
+  keyTalent: '关键人才',
+  highPotential: '高潜人才',
+  successor: '继任人才'
 };
 const PLAN_NAMES = { cp: 'CP', fdr: 'FDR', mt: 'MT', department: '部门计划' };
 const PERFORMANCE_NAMES = {
@@ -1082,7 +1079,7 @@ const RADAR_AXES = [
 
 const STORAGE_KEY = 'talentPoolDashboardData';
 const DATA_VERSION_KEY = 'talentPoolDashboardDataVersion';
-const DEFAULT_DATA_VERSION = '2026-07-16-matrix-radar-v2';
+const DEFAULT_DATA_VERSION = '2026-07-23-category-v3';
 
 // 默认示例数据。后台维护的数据会优先从浏览器本地存储读取。
 const DEFAULT_TALENTS = [
@@ -1103,7 +1100,7 @@ const DEFAULT_TALENTS = [
     creativityWeakness: '创意表达偏产品语言，对品牌化叙事和跨圈层传播包装还可加强。',
     developmentAdvice: '安排品牌/内容项目共创，提升从产品洞察到市场表达的转化能力。',
     risk: '跨部门协同时偶尔过于直接，需注意影响力表达方式。',
-    tagSummary: '高潜 × FDR × 创造力高 × OKR高',
+    tagSummary: '高潜人才 × FDR × 创造力高 × OKR高',
     sourceSummary: '内部 × 校招 × 上海985院校 × 电商岗位',
     avatarColor: 0
   },
@@ -1124,7 +1121,7 @@ const DEFAULT_TALENTS = [
     creativityWeakness: '在高压多项目并行时，容易优先保证交付，对探索性创意投入不足。',
     developmentAdvice: '减少并行项目数量，配置高价值创新课题，训练优先级判断和创意沉淀。',
     risk: '同时推进多个项目时精力分配不均，可能影响关键项目深度。',
-    tagSummary: '继任 × CP × 创造力高 × OKR高',
+    tagSummary: '继任人才 × CP × 创造力高 × OKR高',
     sourceSummary: '内部 × 校招 × 985院校 × 市场岗位',
     avatarColor: 1
   },
@@ -1136,7 +1133,7 @@ const DEFAULT_TALENTS = [
     channelDetail: '互联网电商行业',
     functionRole: 'ecommerce',
     role: '电商运营主管',
-    category: 'backbone',
+    category: 'keyTalent',
     plan: 'department',
     performance: ['lowCreativity', 'highOkr'],
     scores: { creativity: 52, okr: 88, readiness: 78, mobility: 86 },
@@ -1145,7 +1142,7 @@ const DEFAULT_TALENTS = [
     creativityWeakness: '偏短期打法，用户洞察和品牌长期心智建设的创意能力较弱。',
     developmentAdvice: '参与品牌年度战役复盘，补齐从流量策略到品牌资产沉淀的方法论。',
     risk: '传统品牌建设方法论尚未形成体系，独立承担品牌型项目存在风险。',
-    tagSummary: '骨干 × 部门计划 × 创造力低 × OKR高',
+    tagSummary: '关键人才 × 部门计划 × 创造力低 × OKR高',
     sourceSummary: '外部 × 社招行业 × 电商岗位',
     avatarColor: 2
   },
@@ -1166,7 +1163,7 @@ const DEFAULT_TALENTS = [
     creativityWeakness: '内容化、社媒化的新消费表达相对保守，创新触点不够丰富。',
     developmentAdvice: '安排与数字营销团队共创渠道创新项目，提升新场景打法设计能力。',
     risk: '对新消费内容渠道熟悉度有限，可能影响新兴市场拓展速度。',
-    tagSummary: '继任 × FDR × 创造力高 × OKR高',
+    tagSummary: '继任人才 × FDR × 创造力高 × OKR高',
     sourceSummary: '外部 × 社招公司 × 销售岗位',
     avatarColor: 3
   },
@@ -1187,7 +1184,7 @@ const DEFAULT_TALENTS = [
     creativityWeakness: '创意与业务指标的连接不够稳定，商业化约束下的取舍能力需加强。',
     developmentAdvice: '建立campaign前置ROI假设和复盘机制，用业务指标约束创意选择。',
     risk: '对ROI的把控有时让位于创意追求，需加强商业结果闭环。',
-    tagSummary: '高潜 × 部门计划 × 创造力高 × OKR低',
+    tagSummary: '高潜人才 × 部门计划 × 创造力高 × OKR低',
     sourceSummary: '外部 × 社招 × 创意代理公司 × 市场岗位',
     avatarColor: 4
   },
@@ -1199,7 +1196,7 @@ const DEFAULT_TALENTS = [
     channelDetail: 'OD行业',
     functionRole: 'od',
     role: '消费者洞察总监',
-    category: 'backbone',
+    category: 'keyTalent',
     plan: 'cp',
     performance: ['lowCreativity', 'highOkr'],
     scores: { creativity: 58, okr: 73, readiness: 90, mobility: 52 },
@@ -1208,7 +1205,7 @@ const DEFAULT_TALENTS = [
     creativityWeakness: '输出节奏偏谨慎，面对快速试错型场景时创意响应速度不足。',
     developmentAdvice: '引入轻量洞察模板和快速验证机制，提升从研究到行动的速度。',
     risk: '节奏偏慢，在快速变化的营销环境中偶尔滞后。',
-    tagSummary: '骨干 × CP × 创造力低 × OKR高',
+    tagSummary: '关键人才 × CP × 创造力低 × OKR高',
     sourceSummary: '内部 × 社招 × OD行业 × OD岗位',
     avatarColor: 5
   },
@@ -1220,7 +1217,7 @@ const DEFAULT_TALENTS = [
     channelDetail: '上海重点院校',
     functionRole: 'finance',
     role: '商业分析经理',
-    category: 'potential',
+    category: 'highPotential',
     plan: 'mt',
     performance: ['highCreativity', 'lowOkr'],
     scores: { creativity: 86, okr: 62, readiness: 66, mobility: 94 },
@@ -1229,7 +1226,7 @@ const DEFAULT_TALENTS = [
     creativityWeakness: '创意更多停留在分析建议层，对推动跨部门方案落地经验不足。',
     developmentAdvice: '参与经营改善专项，从分析角色延展到方案设计和推动角色。',
     risk: '独立牵头复杂业务议题的经验仍需积累。',
-    tagSummary: '潜力 × MT × 创造力高 × OKR低',
+    tagSummary: '高潜人才 × MT × 创造力高 × OKR低',
     sourceSummary: '外部 × 校招院校 × 财务岗位',
     avatarColor: 6
   },
@@ -1241,7 +1238,7 @@ const DEFAULT_TALENTS = [
     channelDetail: '杭州高校',
     functionRole: 'supply',
     role: '供应链管培生',
-    category: 'potential',
+    category: 'highPotential',
     plan: 'mt',
     performance: ['lowCreativity', 'lowOkr'],
     scores: { creativity: 48, okr: 45, readiness: 58, mobility: 91 },
@@ -1250,7 +1247,7 @@ const DEFAULT_TALENTS = [
     creativityWeakness: '业务场景积累不足，创意多为局部优化，系统性方案设计能力较弱。',
     developmentAdvice: '安排轮岗和导师制，先从小型流程改善项目积累完整闭环经验。',
     risk: '业务历练较浅，需要导师和轮岗机制支持。',
-    tagSummary: '潜力 × MT × 创造力低 × OKR低',
+    tagSummary: '高潜人才 × MT × 创造力低 × OKR低',
     sourceSummary: '外部 × 校招城市 × 供应链岗位',
     avatarColor: 7
   }
@@ -1288,11 +1285,18 @@ function clampScore(value) {
   return Math.max(0, Math.min(100, num));
 }
 
+function normalizeCategory(value) {
+  if (CATEGORY_NAMES[value]) return value;
+  if (value === 'potential') return 'highPotential';
+  if (value === 'backbone') return 'keyTalent';
+  return 'keyTalent';
+}
+
 function normalizeTalent(t, index = 0) {
   const sourceType = SOURCE_TYPE_NAMES[t.sourceType] ? t.sourceType : 'external';
   const channel = CHANNEL_NAMES[t.channel] ? t.channel : 'social';
   const functionRole = FUNCTION_NAMES[t.functionRole] ? t.functionRole : 'marketing';
-  const category = CATEGORY_NAMES[t.category] ? t.category : 'potential';
+  const category = normalizeCategory(t.category);
   const plan = PLAN_NAMES[t.plan] ? t.plan : 'department';
   const performance = Array.isArray(t.performance)
     ? t.performance.filter(k => PERFORMANCE_NAMES[k])
@@ -1775,10 +1779,9 @@ function updateStats(list) {
   document.getElementById('countTotal').textContent = list.length;
   document.getElementById('countInternal').textContent = list.filter(t => t.sourceType === 'internal').length;
   document.getElementById('countExternal').textContent = list.filter(t => t.sourceType === 'external').length;
+  document.getElementById('countKeyTalent').textContent = list.filter(t => t.category === 'keyTalent').length;
   document.getElementById('countHighPotential').textContent = list.filter(t => t.category === 'highPotential').length;
   document.getElementById('countSuccessor').textContent = list.filter(t => t.category === 'successor').length;
-  document.getElementById('countHighPerformance').textContent =
-    list.filter(t => t.performance.includes('highCreativity') && t.performance.includes('highOkr')).length;
 }
 
 function blankTalent() {
@@ -1790,7 +1793,7 @@ function blankTalent() {
     channelDetail: '',
     functionRole: 'marketing',
     role: '',
-    category: 'potential',
+    category: 'keyTalent',
     plan: 'department',
     performance: ['highCreativity', 'highOkr'],
     scores: { creativity: 80, okr: 80, readiness: 70, mobility: 70 },
