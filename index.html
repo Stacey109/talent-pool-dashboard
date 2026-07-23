@@ -248,14 +248,14 @@
   }
 
   .matrix-cell {
-    fill: #fbfcff;
+    fill: #f2f2f2;
     stroke: #e3e9f2;
     stroke-width: 1;
   }
 
-  .matrix-cell.hot { fill: #f0fff8; }
-  .matrix-cell.warn { fill: #fff8ec; }
-  .matrix-cell.risk { fill: #fff2ef; }
+  .matrix-cell.hot { fill: #c6e0b4; }
+  .matrix-cell.warn { fill: #f2f2f2; }
+  .matrix-cell.risk { fill: #f8c7a7; }
 
   .chart-axis-label {
     fill: #68717d;
@@ -713,10 +713,13 @@
     stroke-width: 1;
   }
 
+  .mini-cell.key { fill: #c6e0b4; }
+  .mini-cell.watch { fill: #f2f2f2; }
+  .mini-cell.unfit { fill: #f8c7a7; }
+
   .mini-cell.active {
-    fill: #f0edff;
     stroke: var(--primary);
-    stroke-width: 1.5;
+    stroke-width: 2;
   }
 
   .mini-radar-grid {
@@ -1001,7 +1004,7 @@
       <div class="chart-head">
         <div>
           <div class="chart-title">九宫格人才分布</div>
-          <div class="chart-subtitle">横轴：OKR达成；纵轴：创造力。每个点代表一名人才。</div>
+          <div class="chart-subtitle">横轴：OKR达成（2-5）；纵轴：创造力（20-50）。每个点代表一名人才。</div>
         </div>
         <span class="chart-badge" id="matrixCount">0人</span>
       </div>
@@ -1377,10 +1380,18 @@ function escapeHtml(value) {
   }[ch]));
 }
 
-function scoreBand(value) {
-  if (value >= 80) return '高';
-  if (value >= 60) return '中';
-  return '低';
+function matrixOkrValue(t) {
+  return 2 + clampScore(t.scores.okr) * 0.03;
+}
+
+function matrixCreativityValue(t) {
+  return 20 + clampScore(t.scores.creativity) * 0.3;
+}
+
+function matrixSegmentByValues(okrValue, creativityValue) {
+  if (okrValue >= 3.5 && creativityValue >= 30) return '关键人才';
+  if (okrValue < 3.5 && creativityValue < 30) return '不胜任';
+  return '待观察';
 }
 
 function averageScore(t) {
@@ -1411,18 +1422,18 @@ function renderMatrix(list) {
   const axisY = top + size + 28;
   const axisX = left - 34;
   const cellNames = [
-    ['重点关注对象', '基础胜任者', '可靠执行者'],
-    ['待激活人才', '稳定贡献者', '高贡献人才'],
-    ['待转化人才', '潜力人才', '核心人才']
+    ['不胜任', '待观察', '待观察'],
+    ['待观察', '关键人才', '关键人才'],
+    ['待观察', '关键人才', '关键人才']
   ];
 
   const cellSvg = [];
   for (let row = 0; row < 3; row++) {
     for (let col = 0; col < 3; col++) {
-      const cls = row === 0 && col === 2 ? 'hot' : row === 2 && col === 0 ? 'risk' : row === 0 || col === 0 ? 'warn' : '';
+      const label = cellNames[2 - row][col];
+      const cls = label === '关键人才' ? 'hot' : label === '不胜任' ? 'risk' : 'warn';
       const x = left + col * cell;
       const y = top + row * cell;
-      const label = cellNames[2 - row][col];
       cellSvg.push(`
         <rect class="matrix-cell ${cls}" x="${x}" y="${y}" width="${cell}" height="${cell}" rx="8"></rect>
         <text class="chart-small-label" x="${x + cell / 2}" y="${y + 20}" text-anchor="middle">${label}</text>
@@ -1432,19 +1443,19 @@ function renderMatrix(list) {
 
   const grouped = new Map();
   const dots = list.map((t, index) => {
-    const okr = clampScore(t.scores.okr);
-    const creativity = clampScore(t.scores.creativity);
-    const key = `${Math.floor(okr / 4)}-${Math.floor(creativity / 4)}`;
+    const okr = matrixOkrValue(t);
+    const creativity = matrixCreativityValue(t);
+    const key = `${Math.floor(okr * 10)}-${Math.floor(creativity)}`;
     const offset = grouped.get(key) || 0;
     grouped.set(key, offset + 1);
     const jitter = ((offset % 5) - 2) * 6;
-    const x = left + (okr / 100) * size + jitter;
-    const y = top + size - (creativity / 100) * size + Math.floor(offset / 5) * 6;
+    const x = left + ((okr - 2) / 3) * size + jitter;
+    const y = top + size - ((creativity - 20) / 30) * size + Math.floor(offset / 5) * 6;
     const color = CHART_COLORS[index % CHART_COLORS.length];
     return `
       <g>
         <circle class="person-dot" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="8" fill="${color}">
-          <title>${escapeHtml(t.name)}｜OKR ${okr}｜创造力 ${creativity}</title>
+          <title>${escapeHtml(t.name)}｜OKR ${okr.toFixed(1)}｜创造力 ${Math.round(creativity)}｜${matrixSegmentByValues(okr, creativity)}</title>
         </circle>
         <text class="person-label" x="${(x + 11).toFixed(1)}" y="${(y + 4).toFixed(1)}">${escapeHtml(t.name)}</text>
       </g>
@@ -1458,15 +1469,19 @@ function renderMatrix(list) {
       <line x1="${left}" y1="${top}" x2="${left}" y2="${top + size}" stroke="#cfd8e6" stroke-width="1.5"></line>
       <text class="chart-axis-label" x="${left + size / 2}" y="${axisY}" text-anchor="middle">OKR达成</text>
       <text class="chart-axis-label" x="${axisX}" y="${top + size / 2}" text-anchor="middle" transform="rotate(-90 ${axisX} ${top + size / 2})">创造力</text>
-      <text class="chart-small-label" x="${left}" y="${axisY - 22}" text-anchor="middle">低</text>
-      <text class="chart-small-label" x="${left + size / 2}" y="${axisY - 22}" text-anchor="middle">中</text>
-      <text class="chart-small-label" x="${left + size}" y="${axisY - 22}" text-anchor="middle">高</text>
-      <text class="chart-small-label" x="${left - 18}" y="${top + size}" text-anchor="middle">低</text>
-      <text class="chart-small-label" x="${left - 18}" y="${top + size / 2}" text-anchor="middle">中</text>
-      <text class="chart-small-label" x="${left - 18}" y="${top + 4}" text-anchor="middle">高</text>
+      <text class="chart-small-label" x="${left}" y="${axisY - 22}" text-anchor="middle">2</text>
+      <text class="chart-small-label" x="${left + size / 2}" y="${axisY - 22}" text-anchor="middle">3.5</text>
+      <text class="chart-small-label" x="${left + size}" y="${axisY - 22}" text-anchor="middle">5</text>
+      <text class="chart-small-label" x="${left - 18}" y="${top + size}" text-anchor="middle">20</text>
+      <text class="chart-small-label" x="${left - 18}" y="${top + size / 2}" text-anchor="middle">30</text>
+      <text class="chart-small-label" x="${left - 18}" y="${top + 4}" text-anchor="middle">50</text>
+      <text class="chart-small-label" x="${left - 42}" y="${top + 8}" text-anchor="middle">高</text>
+      <text class="chart-small-label" x="${left - 42}" y="${top + size}" text-anchor="middle">低</text>
+      <text class="chart-small-label" x="${left + 6}" y="${axisY + 20}" text-anchor="middle">低</text>
+      <text class="chart-small-label" x="${left + size - 6}" y="${axisY + 20}" text-anchor="middle">高</text>
       ${dots || `<text class="chart-axis-label" x="${left + size / 2}" y="${top + size / 2}" text-anchor="middle">暂无数据</text>`}
-      <text class="chart-small-label" x="390" y="72">规则：80分以上为高，60-79分为中，60分以下为低</text>
-      <text class="chart-small-label" x="390" y="96">当前位置随筛选结果实时刷新</text>
+      <text class="chart-small-label" x="390" y="72">规则：OKR≥3.5 且创造力≥30 为关键人才</text>
+      <text class="chart-small-label" x="390" y="96">OKR&lt;3.5 且创造力&lt;30 为不胜任，其余为待观察</text>
     </svg>
   `;
 }
@@ -1476,45 +1491,33 @@ function radarValues(t) {
 }
 
 function matrixPositionName(t) {
-  const x = scoreBand(t.scores.okr);
-  const y = scoreBand(t.scores.creativity);
-  const names = {
-    '高-高': '核心人才',
-    '高-中': '高贡献人才',
-    '高-低': '可靠执行者',
-    '中-高': '潜力人才',
-    '中-中': '稳定贡献者',
-    '中-低': '基础胜任者',
-    '低-高': '待转化人才',
-    '低-中': '待激活人才',
-    '低-低': '重点关注对象'
-  };
-  return names[`${x}-${y}`] || `${x}OKR / ${y}创造力`;
-}
-
-function bandIndex(value) {
-  if (value >= 80) return 2;
-  if (value >= 60) return 1;
-  return 0;
+  return matrixSegmentByValues(matrixOkrValue(t), matrixCreativityValue(t));
 }
 
 function renderMiniMatrix(t) {
   const size = 108;
   const cell = 36;
-  const okr = clampScore(t.scores.okr);
-  const creativity = clampScore(t.scores.creativity);
-  const col = bandIndex(okr);
-  const row = 2 - bandIndex(creativity);
-  const x = (okr / 100) * size;
-  const y = size - (creativity / 100) * size;
+  const okr = matrixOkrValue(t);
+  const creativity = matrixCreativityValue(t);
+  const col = okr >= 3.5 ? (okr >= 4.35 ? 2 : 1) : 0;
+  const row = creativity >= 30 ? (creativity >= 40 ? 0 : 1) : 2;
+  const x = ((okr - 2) / 3) * size;
+  const y = size - ((creativity - 20) / 30) * size;
   const label = matrixPositionName(t);
   const labelOnLeft = x > 68;
   const labelX = labelOnLeft ? x - 8 : x + 8;
   const labelAnchor = labelOnLeft ? 'end' : 'start';
+  const cellNames = [
+    ['待观察', '关键人才', '关键人才'],
+    ['待观察', '关键人才', '关键人才'],
+    ['不胜任', '待观察', '待观察']
+  ];
   const cells = [];
   for (let r = 0; r < 3; r++) {
     for (let c = 0; c < 3; c++) {
-      cells.push(`<rect class="mini-cell ${r === row && c === col ? 'active' : ''}" x="${c * cell}" y="${r * cell}" width="${cell}" height="${cell}" rx="5"></rect>`);
+      const segment = cellNames[r][c];
+      const cls = segment === '关键人才' ? 'key' : segment === '不胜任' ? 'unfit' : 'watch';
+      cells.push(`<rect class="mini-cell ${cls} ${r === row && c === col ? 'active' : ''}" x="${c * cell}" y="${r * cell}" width="${cell}" height="${cell}" rx="5"></rect>`);
     }
   }
   return `
@@ -1526,6 +1529,12 @@ function renderMiniMatrix(t) {
       <text class="person-label" x="${labelX.toFixed(1)}" y="${(y + 4).toFixed(1)}" text-anchor="${labelAnchor}">${label}</text>
       <text class="chart-small-label" x="54" y="126" text-anchor="middle">OKR达成</text>
       <text class="chart-small-label" x="-14" y="58" text-anchor="middle" transform="rotate(-90 -14 58)">创造力</text>
+      <text class="chart-small-label" x="0" y="120" text-anchor="middle">2</text>
+      <text class="chart-small-label" x="54" y="120" text-anchor="middle">3.5</text>
+      <text class="chart-small-label" x="108" y="120" text-anchor="middle">5</text>
+      <text class="chart-small-label" x="-8" y="109" text-anchor="end">20</text>
+      <text class="chart-small-label" x="-8" y="72" text-anchor="end">30</text>
+      <text class="chart-small-label" x="-8" y="6" text-anchor="end">50</text>
     </svg>
   `;
 }
