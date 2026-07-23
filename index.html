@@ -1426,8 +1426,8 @@ function renderMatrix(list) {
   const size = 246;
   const xBounds = [left, left + size / 3, left + size / 2, left + size];
   const y30 = top + size - ((30 - 20) / 30) * size;
-  const y45 = top + size - ((45 - 20) / 30) * size;
-  const yBounds = [top, y45, y30, top + size];
+  const y40 = top + size - ((40 - 20) / 30) * size;
+  const yBounds = [top, y40, y30, top + size];
   const axisY = top + size + 28;
   const axisX = left - 34;
   const cellNames = [
@@ -1486,7 +1486,7 @@ function renderMatrix(list) {
       <text class="chart-small-label" x="${left + size}" y="${axisY - 22}" text-anchor="middle">5</text>
       <text class="chart-small-label" x="${left - 18}" y="${top + size}" text-anchor="middle">20</text>
       <text class="chart-small-label" x="${left - 18}" y="${y30 + 4}" text-anchor="middle">30</text>
-      <text class="chart-small-label" x="${left - 18}" y="${top + size - ((40 - 20) / 30) * size + 4}" text-anchor="middle">40</text>
+      <text class="chart-small-label" x="${left - 18}" y="${y40 + 4}" text-anchor="middle">40</text>
       <text class="chart-small-label" x="${left - 18}" y="${top + 4}" text-anchor="middle">50</text>
       <text class="chart-small-label" x="${left - 42}" y="${top + 8}" text-anchor="middle">高</text>
       <text class="chart-small-label" x="${left - 42}" y="${top + size}" text-anchor="middle">低</text>
@@ -1514,10 +1514,10 @@ function renderMiniMatrix(t) {
   const creativity = matrixCreativityValue(t);
   const xBounds = [0, size / 3, size / 2, size];
   const y30 = size - ((30 - 20) / 30) * size;
-  const y45 = size - ((45 - 20) / 30) * size;
-  const yBounds = [0, y45, y30, size];
+  const y40 = size - ((40 - 20) / 30) * size;
+  const yBounds = [0, y40, y30, size];
   const col = okr >= 3.5 ? 2 : okr >= 3 ? 1 : 0;
-  const row = creativity >= 45 ? 0 : creativity >= 30 ? 1 : 2;
+  const row = creativity >= 40 ? 0 : creativity >= 30 ? 1 : 2;
   const x = ((okr - 2) / 3) * size;
   const y = size - ((creativity - 20) / 30) * size;
   const label = matrixPositionName(t);
@@ -1556,7 +1556,7 @@ function renderMiniMatrix(t) {
       <text class="chart-small-label" x="108" y="120" text-anchor="middle">5</text>
       <text class="chart-small-label" x="-8" y="109" text-anchor="end">20</text>
       <text class="chart-small-label" x="-8" y="${(y30 + 3).toFixed(1)}" text-anchor="end">30</text>
-      <text class="chart-small-label" x="-8" y="${(size - ((40 - 20) / 30) * size + 3).toFixed(1)}" text-anchor="end">40</text>
+      <text class="chart-small-label" x="-8" y="${(y40 + 3).toFixed(1)}" text-anchor="end">40</text>
       <text class="chart-small-label" x="-8" y="6" text-anchor="end">50</text>
     </svg>
   `;
