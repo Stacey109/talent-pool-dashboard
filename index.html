@@ -1004,7 +1004,7 @@
       <div class="chart-head">
         <div>
           <div class="chart-title">九宫格人才分布</div>
-          <div class="chart-subtitle">横轴：OKR达成（2 / 3.5 / 5）；纵轴：创造力（30 / 45 / 50）。每个点代表一名人才。</div>
+          <div class="chart-subtitle">横轴标识：2 / 3 / 4 / 5；纵轴标识：20 / 30 / 40 / 50。九宫格分区按盘点规则呈现。</div>
         </div>
         <span class="chart-badge" id="matrixCount">0人</span>
       </div>
@@ -1482,11 +1482,12 @@ function renderMatrix(list) {
       <text class="chart-axis-label" x="${left + size / 2}" y="${axisY}" text-anchor="middle">OKR达成</text>
       <text class="chart-axis-label" x="${axisX}" y="${top + size / 2}" text-anchor="middle" transform="rotate(-90 ${axisX} ${top + size / 2})">创造力</text>
       <text class="chart-small-label" x="${left}" y="${axisY - 22}" text-anchor="middle">2</text>
-      <text class="chart-small-label" x="${left + size / 2}" y="${axisY - 22}" text-anchor="middle">3.5</text>
+      <text class="chart-small-label" x="${left + size / 3}" y="${axisY - 22}" text-anchor="middle">3</text>
+      <text class="chart-small-label" x="${left + size * 2 / 3}" y="${axisY - 22}" text-anchor="middle">4</text>
       <text class="chart-small-label" x="${left + size}" y="${axisY - 22}" text-anchor="middle">5</text>
       <text class="chart-small-label" x="${left - 18}" y="${top + size}" text-anchor="middle">20</text>
       <text class="chart-small-label" x="${left - 18}" y="${y30 + 4}" text-anchor="middle">30</text>
-      <text class="chart-small-label" x="${left - 18}" y="${y45 + 4}" text-anchor="middle">45</text>
+      <text class="chart-small-label" x="${left - 18}" y="${top + size - ((40 - 20) / 30) * size + 4}" text-anchor="middle">40</text>
       <text class="chart-small-label" x="${left - 18}" y="${top + 4}" text-anchor="middle">50</text>
       <text class="chart-small-label" x="${left - 42}" y="${top + 8}" text-anchor="middle">高</text>
       <text class="chart-small-label" x="${left - 42}" y="${top + size}" text-anchor="middle">低</text>
@@ -1551,11 +1552,12 @@ function renderMiniMatrix(t) {
       <text class="chart-small-label" x="54" y="126" text-anchor="middle">OKR达成</text>
       <text class="chart-small-label" x="-14" y="58" text-anchor="middle" transform="rotate(-90 -14 58)">创造力</text>
       <text class="chart-small-label" x="0" y="120" text-anchor="middle">2</text>
-      <text class="chart-small-label" x="54" y="120" text-anchor="middle">3.5</text>
+      <text class="chart-small-label" x="36" y="120" text-anchor="middle">3</text>
+      <text class="chart-small-label" x="72" y="120" text-anchor="middle">4</text>
       <text class="chart-small-label" x="108" y="120" text-anchor="middle">5</text>
       <text class="chart-small-label" x="-8" y="109" text-anchor="end">20</text>
       <text class="chart-small-label" x="-8" y="${(y30 + 3).toFixed(1)}" text-anchor="end">30</text>
-      <text class="chart-small-label" x="-8" y="${(y45 + 3).toFixed(1)}" text-anchor="end">45</text>
+      <text class="chart-small-label" x="-8" y="${(size - ((40 - 20) / 30) * size + 3).toFixed(1)}" text-anchor="end">40</text>
       <text class="chart-small-label" x="-8" y="6" text-anchor="end">50</text>
     </svg>
   `;
