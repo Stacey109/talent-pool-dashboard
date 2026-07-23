@@ -254,6 +254,7 @@
   }
 
   .matrix-cell.hot { fill: #c6e0b4; }
+  .matrix-cell.core { fill: #fff1c6; }
   .matrix-cell.warn { fill: #f2f2f2; }
   .matrix-cell.risk { fill: #f8c7a7; }
 
@@ -714,6 +715,7 @@
   }
 
   .mini-cell.key { fill: #c6e0b4; }
+  .mini-cell.core { fill: #fff1c6; }
   .mini-cell.watch { fill: #f2f2f2; }
   .mini-cell.unfit { fill: #f8c7a7; }
 
@@ -1002,7 +1004,7 @@
       <div class="chart-head">
         <div>
           <div class="chart-title">九宫格人才分布</div>
-          <div class="chart-subtitle">横轴：OKR达成（2-5）；纵轴：创造力（20-50）。每个点代表一名人才。</div>
+          <div class="chart-subtitle">横轴：OKR达成（2 / 3.5 / 5）；纵轴：创造力（30 / 45 / 50）。每个点代表一名人才。</div>
         </div>
         <span class="chart-badge" id="matrixCount">0人</span>
       </div>
@@ -1394,6 +1396,7 @@ function matrixCreativityValue(t) {
 
 function matrixSegmentByValues(okrValue, creativityValue) {
   if (okrValue >= 3.5 && creativityValue >= 30) return '关键人才';
+  if (okrValue >= 3 && okrValue < 3.5 && creativityValue >= 30) return '中坚力量';
   if (okrValue < 3.5 && creativityValue < 30) return '不胜任';
   return '待观察';
 }
@@ -1422,25 +1425,30 @@ function renderMatrix(list) {
   const left = 72;
   const top = 32;
   const size = 246;
-  const cell = size / 3;
+  const xBounds = [left, left + size / 3, left + size / 2, left + size];
+  const y30 = top + size - ((30 - 20) / 30) * size;
+  const y45 = top + size - ((45 - 20) / 30) * size;
+  const yBounds = [top, y45, y30, top + size];
   const axisY = top + size + 28;
   const axisX = left - 34;
   const cellNames = [
-    ['不胜任', '待观察', '待观察'],
-    ['待观察', '关键人才', '关键人才'],
-    ['待观察', '关键人才', '关键人才']
+    ['待观察', '中坚力量', '关键人才'],
+    ['待观察', '中坚力量', '关键人才'],
+    ['不胜任', '待观察', '待观察']
   ];
 
   const cellSvg = [];
   for (let row = 0; row < 3; row++) {
     for (let col = 0; col < 3; col++) {
-      const label = cellNames[2 - row][col];
-      const cls = label === '关键人才' ? 'hot' : label === '不胜任' ? 'risk' : 'warn';
-      const x = left + col * cell;
-      const y = top + row * cell;
+      const label = cellNames[row][col];
+      const cls = label === '关键人才' ? 'hot' : label === '中坚力量' ? 'core' : label === '不胜任' ? 'risk' : 'warn';
+      const x = xBounds[col];
+      const y = yBounds[row];
+      const w = xBounds[col + 1] - xBounds[col];
+      const h = yBounds[row + 1] - yBounds[row];
       cellSvg.push(`
-        <rect class="matrix-cell ${cls}" x="${x}" y="${y}" width="${cell}" height="${cell}" rx="8"></rect>
-        <text class="chart-small-label" x="${x + cell / 2}" y="${y + 20}" text-anchor="middle">${label}</text>
+        <rect class="matrix-cell ${cls}" x="${x}" y="${y}" width="${w}" height="${h}" rx="8"></rect>
+        <text class="chart-small-label" x="${x + w / 2}" y="${y + h / 2 + 4}" text-anchor="middle">${label}</text>
       `);
     }
   }
@@ -1477,7 +1485,8 @@ function renderMatrix(list) {
       <text class="chart-small-label" x="${left + size / 2}" y="${axisY - 22}" text-anchor="middle">3.5</text>
       <text class="chart-small-label" x="${left + size}" y="${axisY - 22}" text-anchor="middle">5</text>
       <text class="chart-small-label" x="${left - 18}" y="${top + size}" text-anchor="middle">20</text>
-      <text class="chart-small-label" x="${left - 18}" y="${top + size / 2}" text-anchor="middle">30</text>
+      <text class="chart-small-label" x="${left - 18}" y="${y30 + 4}" text-anchor="middle">30</text>
+      <text class="chart-small-label" x="${left - 18}" y="${y45 + 4}" text-anchor="middle">45</text>
       <text class="chart-small-label" x="${left - 18}" y="${top + 4}" text-anchor="middle">50</text>
       <text class="chart-small-label" x="${left - 42}" y="${top + 8}" text-anchor="middle">高</text>
       <text class="chart-small-label" x="${left - 42}" y="${top + size}" text-anchor="middle">低</text>
@@ -1485,7 +1494,8 @@ function renderMatrix(list) {
       <text class="chart-small-label" x="${left + size - 6}" y="${axisY + 20}" text-anchor="middle">高</text>
       ${dots || `<text class="chart-axis-label" x="${left + size / 2}" y="${top + size / 2}" text-anchor="middle">暂无数据</text>`}
       <text class="chart-small-label" x="390" y="72">规则：OKR≥3.5 且创造力≥30 为关键人才</text>
-      <text class="chart-small-label" x="390" y="96">OKR&lt;3.5 且创造力&lt;30 为不胜任，其余为待观察</text>
+      <text class="chart-small-label" x="390" y="96">OKR 3.0-3.5 且创造力≥30 为中坚力量</text>
+      <text class="chart-small-label" x="390" y="120">OKR&lt;3.5 且创造力&lt;30 为不胜任，其余为待观察</text>
     </svg>
   `;
 }
@@ -1500,11 +1510,14 @@ function matrixPositionName(t) {
 
 function renderMiniMatrix(t) {
   const size = 108;
-  const cell = 36;
   const okr = matrixOkrValue(t);
   const creativity = matrixCreativityValue(t);
-  const col = okr >= 3.5 ? (okr >= 4.35 ? 2 : 1) : 0;
-  const row = creativity >= 30 ? (creativity >= 40 ? 0 : 1) : 2;
+  const xBounds = [0, size / 3, size / 2, size];
+  const y30 = size - ((30 - 20) / 30) * size;
+  const y45 = size - ((45 - 20) / 30) * size;
+  const yBounds = [0, y45, y30, size];
+  const col = okr >= 3.5 ? 2 : okr >= 3 ? 1 : 0;
+  const row = creativity >= 45 ? 0 : creativity >= 30 ? 1 : 2;
   const x = ((okr - 2) / 3) * size;
   const y = size - ((creativity - 20) / 30) * size;
   const label = matrixPositionName(t);
@@ -1512,16 +1525,20 @@ function renderMiniMatrix(t) {
   const labelX = labelOnLeft ? x - 8 : x + 8;
   const labelAnchor = labelOnLeft ? 'end' : 'start';
   const cellNames = [
-    ['待观察', '关键人才', '关键人才'],
-    ['待观察', '关键人才', '关键人才'],
+    ['待观察', '中坚力量', '关键人才'],
+    ['待观察', '中坚力量', '关键人才'],
     ['不胜任', '待观察', '待观察']
   ];
   const cells = [];
   for (let r = 0; r < 3; r++) {
     for (let c = 0; c < 3; c++) {
       const segment = cellNames[r][c];
-      const cls = segment === '关键人才' ? 'key' : segment === '不胜任' ? 'unfit' : 'watch';
-      cells.push(`<rect class="mini-cell ${cls} ${r === row && c === col ? 'active' : ''}" x="${c * cell}" y="${r * cell}" width="${cell}" height="${cell}" rx="5"></rect>`);
+      const cls = segment === '关键人才' ? 'key' : segment === '中坚力量' ? 'core' : segment === '不胜任' ? 'unfit' : 'watch';
+      const x0 = xBounds[c];
+      const y0 = yBounds[r];
+      const w = xBounds[c + 1] - xBounds[c];
+      const h = yBounds[r + 1] - yBounds[r];
+      cells.push(`<rect class="mini-cell ${cls} ${r === row && c === col ? 'active' : ''}" x="${x0}" y="${y0}" width="${w}" height="${h}" rx="5"></rect>`);
     }
   }
   return `
@@ -1537,7 +1554,8 @@ function renderMiniMatrix(t) {
       <text class="chart-small-label" x="54" y="120" text-anchor="middle">3.5</text>
       <text class="chart-small-label" x="108" y="120" text-anchor="middle">5</text>
       <text class="chart-small-label" x="-8" y="109" text-anchor="end">20</text>
-      <text class="chart-small-label" x="-8" y="72" text-anchor="end">30</text>
+      <text class="chart-small-label" x="-8" y="${(y30 + 3).toFixed(1)}" text-anchor="end">30</text>
+      <text class="chart-small-label" x="-8" y="${(y45 + 3).toFixed(1)}" text-anchor="end">45</text>
       <text class="chart-small-label" x="-8" y="6" text-anchor="end">50</text>
     </svg>
   `;
