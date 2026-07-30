@@ -118,6 +118,57 @@
     font-weight: 520;
   }
 
+  .search-toolbar {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 14px;
+    display: grid;
+    grid-template-columns: 180px 180px 180px minmax(260px, 1fr) auto auto;
+    gap: 12px;
+    align-items: end;
+  }
+
+  .toolbar-field {
+    display: grid;
+    gap: 6px;
+  }
+
+  .toolbar-field label {
+    color: var(--sub);
+    font-size: 12px;
+    font-weight: 760;
+  }
+
+  .toolbar-field select,
+  .toolbar-field input {
+    width: 100%;
+    height: 42px;
+    border: 1px solid #dce3ee;
+    border-radius: 9px;
+    background: #fff;
+    color: var(--text);
+    font-size: 14px;
+    outline: none;
+    padding: 0 12px;
+  }
+
+  .toolbar-field input::placeholder { color: #aeb7c4; }
+
+  .scope-count {
+    color: var(--sub);
+    font-size: 13px;
+    font-weight: 680;
+    white-space: nowrap;
+    padding-bottom: 10px;
+  }
+
+  .scope-count strong {
+    color: #11263a;
+    font-size: 22px;
+    margin: 0 4px;
+  }
+
   .filter-group {
     display: grid;
     grid-template-columns: 78px 1fr;
@@ -190,6 +241,92 @@
     font-size: 13px;
     margin-top: 4px;
   }
+
+  .insight-row {
+    max-width: 1480px;
+    margin: 0 auto 20px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .insight-card {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .insight-head {
+    padding: 16px 18px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .insight-title {
+    color: var(--text);
+    font-size: 18px;
+    font-weight: 780;
+  }
+
+  .insight-subtitle {
+    color: var(--sub);
+    font-size: 12px;
+    margin-top: 3px;
+  }
+
+  .insight-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .insight-item {
+    min-height: 112px;
+    padding: 18px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .insight-item:nth-child(2n) { border-right: none; }
+  .insight-item:nth-last-child(-n+2) { border-bottom: none; }
+
+  .insight-label {
+    color: var(--sub);
+    font-size: 13px;
+    font-weight: 760;
+  }
+
+  .insight-value {
+    color: #12304a;
+    font-size: 28px;
+    font-weight: 820;
+    letter-spacing: .2px;
+    margin-top: 9px;
+  }
+
+  .insight-note {
+    color: var(--sub);
+    font-size: 12px;
+    margin-top: 7px;
+    line-height: 1.45;
+  }
+
+  .mini-progress {
+    height: 9px;
+    background: #e9eef3;
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 10px;
+  }
+
+  .mini-progress span {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, #2f6682, #d98f28);
+  }
+
+  .mini-progress.green span { background: #21866d; }
+  .mini-progress.purple span { background: var(--primary); }
 
   .analytics-row {
     max-width: 1480px;
@@ -449,32 +586,6 @@
     justify-content: flex-end;
     padding-top: 4px;
   }
-
-  .search-bar-wrap {
-    max-width: 1480px;
-    margin: 0 auto 20px;
-  }
-
-  .search-bar {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    background: #fff;
-    border-radius: var(--radius);
-    padding: 10px 18px;
-    box-shadow: var(--shadow);
-  }
-
-  .search-bar input {
-    flex: 1;
-    border: none;
-    outline: none;
-    color: var(--text);
-    background: transparent;
-    font-size: 15px;
-  }
-
-  .search-bar input::placeholder { color: #b6bec9; }
 
   .cards-grid {
     max-width: 1480px;
@@ -766,12 +877,18 @@
 
   @media (max-width: 820px) {
     body { padding: 24px 14px; }
+    .search-toolbar { grid-template-columns: 1fr; }
     .quick-filters { grid-template-columns: 1fr; }
     .filter-group { grid-template-columns: 74px 1fr; }
     .admin-layout { grid-template-columns: 1fr; }
     .admin-form { grid-template-columns: 1fr; }
     .field.wide { grid-column: 1; }
     .score-inputs { grid-template-columns: 1fr; }
+    .insight-row { grid-template-columns: 1fr; }
+    .insight-grid { grid-template-columns: 1fr; }
+    .insight-item { border-right: none; }
+    .insight-item:nth-last-child(-n+2) { border-bottom: 1px solid var(--border); }
+    .insight-item:last-child { border-bottom: none; }
     .analytics-row { grid-template-columns: 1fr; }
     .cards-grid { grid-template-columns: 1fr; }
     .personal-analytics { grid-template-columns: 1fr; }
@@ -783,7 +900,7 @@
 
   @media print {
     body { background: #fff; padding: 0; }
-    .quick-filters, .stats-row, .search-bar-wrap { display: none; }
+    .quick-filters, .search-toolbar, .stats-row { display: none; }
     .talent-card { break-inside: avoid; box-shadow: none; border: 1px solid #dde2ea; }
   }
 </style>
@@ -796,6 +913,31 @@
         <button class="action-btn" id="toggleAdminBtn">数据维护</button>
         <button class="action-btn secondary" id="exportBtn">导出JSON</button>
       </div>
+    </div>
+    <div class="search-toolbar">
+      <div class="toolbar-field">
+        <label for="departmentFilter">大部门</label>
+        <select id="departmentFilter"></select>
+      </div>
+      <div class="toolbar-field">
+        <label for="subDepartmentFilter">一级部门</label>
+        <select id="subDepartmentFilter"></select>
+      </div>
+      <div class="toolbar-field">
+        <label for="categoryQuickFilter">人才标签</label>
+        <select id="categoryQuickFilter">
+          <option value="">全部标签</option>
+          <option value="keyTalent">关键人才</option>
+          <option value="highPotential">高潜人才</option>
+          <option value="successor">继任人才</option>
+        </select>
+      </div>
+      <div class="toolbar-field">
+        <label for="searchInput">搜索人员或部门</label>
+        <input type="text" id="searchInput" placeholder="输入姓名、岗位、大部门或一级部门快速查找">
+      </div>
+      <button class="action-btn secondary" id="resetSearchBtn">重置筛选</button>
+      <div class="scope-count">当前范围 <strong id="scopeCount">0</strong> 位人才</div>
     </div>
     <div class="quick-filters" id="filterPills">
       <div class="filter-module">
@@ -889,9 +1031,28 @@
           <label for="yearsInput">年限</label>
           <input id="yearsInput" type="number" min="0" max="40" required>
         </div>
+        <div class="field">
+          <label for="ageInput">年龄</label>
+          <input id="ageInput" type="number" min="18" max="65">
+        </div>
+        <div class="field">
+          <label for="genderInput">性别</label>
+          <select id="genderInput">
+            <option value="female">女</option>
+            <option value="male">男</option>
+          </select>
+        </div>
         <div class="field wide">
           <label for="roleInput">岗位</label>
           <input id="roleInput" required>
+        </div>
+        <div class="field">
+          <label for="departmentInput">大部门</label>
+          <input id="departmentInput" placeholder="如：销售管理部">
+        </div>
+        <div class="field">
+          <label for="subDepartmentInput">一级部门</label>
+          <input id="subDepartmentInput" placeholder="如：区域销售部">
         </div>
         <div class="field">
           <label for="sourceTypeInput">来源类型</label>
@@ -999,6 +1160,23 @@
     <div class="stat-card"><div class="num" id="countSuccessor">0</div><div class="label">继任人才</div></div>
   </div>
 
+  <div class="insight-row">
+    <div class="insight-card">
+      <div class="insight-head">
+        <div class="insight-title">员工基础信息</div>
+        <div class="insight-subtitle">司龄、年龄、性别与招聘渠道</div>
+      </div>
+      <div class="insight-grid" id="employeeInfoGrid"></div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-head">
+        <div class="insight-title">团队健康快照</div>
+        <div class="insight-subtitle">团队稳定性与继任准备度</div>
+      </div>
+      <div class="insight-grid" id="teamHealthGrid"></div>
+    </div>
+  </div>
+
   <div class="analytics-row">
     <div class="chart-card">
       <div class="chart-head">
@@ -1019,14 +1197,6 @@
       </div>
       <div class="chart-body" id="radarChart"></div>
       <div class="radar-legend" id="radarLegend"></div>
-    </div>
-  </div>
-
-  <div class="search-bar-wrap">
-    <div class="search-bar">
-      <span>🔍</span>
-      <input type="text" id="searchInput" placeholder="搜索姓名、岗位、来源渠道、人才计划、表现标签……">
-      <span style="font-size:12px;color:#b7bec9;" id="resultHint"></span>
     </div>
   </div>
 
@@ -1056,6 +1226,7 @@ const CATEGORY_NAMES = {
   highPotential: '高潜人才',
   successor: '继任人才'
 };
+const GENDER_NAMES = { female: '女', male: '男' };
 const PLAN_NAMES = { cp: 'CP', fdr: 'FDR', mt: 'MT', department: '部门计划' };
 const PERFORMANCE_NAMES = {
   highCreativity: '高创造力',
@@ -1080,13 +1251,17 @@ const RADAR_AXES = [
 
 const STORAGE_KEY = 'talentPoolDashboardData';
 const DATA_VERSION_KEY = 'talentPoolDashboardDataVersion';
-const DEFAULT_DATA_VERSION = '2026-07-23-category-v3';
+const DEFAULT_DATA_VERSION = '2026-07-30-bi-insights-v1';
 
 // 默认示例数据。后台维护的数据会优先从浏览器本地存储读取。
 const DEFAULT_TALENTS = [
   {
     name: '李雨桐',
     years: 6,
+    age: 34,
+    gender: 'female',
+    department: '发展部',
+    subDepartment: '电商业务部',
     sourceType: 'internal',
     channel: 'campus',
     channelDetail: '上海985院校',
@@ -1108,6 +1283,10 @@ const DEFAULT_TALENTS = [
   {
     name: '王语晴',
     years: 7,
+    age: 35,
+    gender: 'female',
+    department: '发展部',
+    subDepartment: '品牌市场部',
     sourceType: 'internal',
     channel: 'campus',
     channelDetail: '985院校',
@@ -1129,6 +1308,10 @@ const DEFAULT_TALENTS = [
   {
     name: '赵晨宇',
     years: 4,
+    age: 31,
+    gender: 'male',
+    department: '销售管理部',
+    subDepartment: '电商运营部',
     sourceType: 'external',
     channel: 'social',
     channelDetail: '互联网电商行业',
@@ -1150,6 +1333,10 @@ const DEFAULT_TALENTS = [
   {
     name: '陈思远',
     years: 9,
+    age: 38,
+    gender: 'male',
+    department: '销售管理部',
+    subDepartment: '区域销售部',
     sourceType: 'external',
     channel: 'social',
     channelDetail: '快消头部公司',
@@ -1171,6 +1358,10 @@ const DEFAULT_TALENTS = [
   {
     name: '林初夏',
     years: 8,
+    age: 36,
+    gender: 'female',
+    department: '发展部',
+    subDepartment: '品牌市场部',
     sourceType: 'external',
     channel: 'social',
     channelDetail: '创意代理公司',
@@ -1192,6 +1383,10 @@ const DEFAULT_TALENTS = [
   {
     name: '吴若曦',
     years: 10,
+    age: 39,
+    gender: 'female',
+    department: '组织发展部',
+    subDepartment: '消费者洞察部',
     sourceType: 'internal',
     channel: 'social',
     channelDetail: 'OD行业',
@@ -1213,6 +1408,10 @@ const DEFAULT_TALENTS = [
   {
     name: '郑晴天',
     years: 6,
+    age: 33,
+    gender: 'female',
+    department: '财务部',
+    subDepartment: '商业分析部',
     sourceType: 'external',
     channel: 'campus',
     channelDetail: '上海重点院校',
@@ -1234,6 +1433,10 @@ const DEFAULT_TALENTS = [
   {
     name: '孙嘉禾',
     years: 3,
+    age: 28,
+    gender: 'male',
+    department: '供应链部',
+    subDepartment: '供应链计划部',
     sourceType: 'external',
     channel: 'campus',
     channelDetail: '杭州高校',
@@ -1299,6 +1502,8 @@ function normalizeTalent(t, index = 0) {
   const functionRole = FUNCTION_NAMES[t.functionRole] ? t.functionRole : 'marketing';
   const category = normalizeCategory(t.category);
   const plan = PLAN_NAMES[t.plan] ? t.plan : 'department';
+  const inferredAge = Math.max(24, Math.min(58, Math.round(28 + Number(t.years || 0) * 0.8)));
+  const gender = GENDER_NAMES[t.gender] ? t.gender : (index % 2 === 0 ? 'female' : 'male');
   const performance = Array.isArray(t.performance)
     ? t.performance.filter(k => PERFORMANCE_NAMES[k])
     : ['highCreativity', 'highOkr'];
@@ -1307,6 +1512,10 @@ function normalizeTalent(t, index = 0) {
   const talent = {
     name: String(t.name || '未命名人才').trim(),
     years: Number(t.years || 0),
+    age: Number(t.age || inferredAge),
+    gender,
+    department: String(t.department || defaultDepartment(functionRole)).trim(),
+    subDepartment: String(t.subDepartment || defaultSubDepartment(functionRole)).trim(),
     sourceType,
     channel,
     channelDetail: String(t.channelDetail || '').trim(),
@@ -1335,11 +1544,37 @@ function normalizeTalent(t, index = 0) {
 
 function makeSourceSummary(t) {
   return [
+    t.department,
+    t.subDepartment,
     SOURCE_TYPE_NAMES[t.sourceType],
     CHANNEL_NAMES[t.channel],
     t.channelDetail,
     `${FUNCTION_NAMES[t.functionRole]}岗位`
   ].filter(Boolean).join(' × ');
+}
+
+function defaultDepartment(functionRole) {
+  const map = {
+    marketing: '发展部',
+    ecommerce: '销售管理部',
+    sales: '销售管理部',
+    supply: '供应链部',
+    finance: '财务部',
+    od: '组织发展部'
+  };
+  return map[functionRole] || '发展部';
+}
+
+function defaultSubDepartment(functionRole) {
+  const map = {
+    marketing: '品牌市场部',
+    ecommerce: '电商运营部',
+    sales: '区域销售部',
+    supply: '供应链计划部',
+    finance: '商业分析部',
+    od: '组织发展部'
+  };
+  return map[functionRole] || '综合管理部';
 }
 
 function makeTagSummary(t) {
@@ -1748,6 +1983,9 @@ function renderCard(t) {
 
 let activeFilter = 'all';
 let searchTerm = '';
+let departmentFilter = '';
+let subDepartmentFilter = '';
+let categoryQuickFilter = '';
 
 function matchFilter(t) {
   if (activeFilter === 'all') return true;
@@ -1765,11 +2003,24 @@ function matchFilter(t) {
 function applyFilters() {
   let result = talents.filter(matchFilter);
 
+  if (departmentFilter) {
+    result = result.filter(t => t.department === departmentFilter);
+  }
+
+  if (subDepartmentFilter) {
+    result = result.filter(t => t.subDepartment === subDepartmentFilter);
+  }
+
+  if (categoryQuickFilter) {
+    result = result.filter(t => t.category === categoryQuickFilter);
+  }
+
   if (searchTerm.trim()) {
     const s = searchTerm.trim().toLowerCase();
     result = result.filter(t => {
       const text = [
         t.name, t.role, SOURCE_TYPE_NAMES[t.sourceType], CHANNEL_NAMES[t.channel],
+        t.department, t.subDepartment,
         t.channelDetail, FUNCTION_NAMES[t.functionRole], CATEGORY_NAMES[t.category],
         PLAN_NAMES[t.plan], ...t.performance.map(k => PERFORMANCE_NAMES[k]),
         t.creativityStrength, t.creativityWeakness, t.developmentAdvice, t.risk
@@ -1787,9 +2038,10 @@ function renderAll(list) {
   grid.innerHTML = list.map(renderCard).join('');
   grid.style.display = list.length ? 'grid' : 'none';
   empty.style.display = list.length ? 'none' : 'block';
-  document.getElementById('resultHint').textContent =
-    list.length === talents.length ? '' : `显示 ${list.length} / ${talents.length} 人`;
+  document.getElementById('scopeCount').textContent = list.length;
   updateStats(list);
+  renderEmployeeInfo(list);
+  renderTeamHealth(list);
   renderMatrix(list);
   renderRadar(list);
 }
@@ -1803,10 +2055,129 @@ function updateStats(list) {
   document.getElementById('countSuccessor').textContent = list.filter(t => t.category === 'successor').length;
 }
 
+function average(list, getter) {
+  if (!list.length) return 0;
+  return list.reduce((sum, item) => sum + Number(getter(item) || 0), 0) / list.length;
+}
+
+function percent(part, total) {
+  if (!total) return 0;
+  return Math.round((part / total) * 100);
+}
+
+function renderEmployeeInfo(list) {
+  const host = document.getElementById('employeeInfoGrid');
+  const female = list.filter(t => t.gender === 'female').length;
+  const male = list.filter(t => t.gender === 'male').length;
+  const social = list.filter(t => t.channel === 'social').length;
+  const campus = list.filter(t => t.channel === 'campus').length;
+  const total = list.length;
+  const socialPercent = percent(social, total);
+  host.innerHTML = `
+    <div class="insight-item">
+      <div class="insight-label">平均司龄</div>
+      <div class="insight-value">${average(list, t => t.years).toFixed(1)}年</div>
+      <div class="insight-note">反映当前范围人才经验沉淀</div>
+    </div>
+    <div class="insight-item">
+      <div class="insight-label">平均年龄</div>
+      <div class="insight-value">${average(list, t => t.age).toFixed(1)}岁</div>
+      <div class="insight-note">当前筛选范围人才平均值</div>
+    </div>
+    <div class="insight-item">
+      <div class="insight-label">男女占比</div>
+      <div class="insight-value">${percent(male, total)}% / ${percent(female, total)}%</div>
+      <div class="mini-progress"><span style="width:${percent(male, total)}%;"></span></div>
+      <div class="insight-note">男 ${male}人 · 女 ${female}人</div>
+    </div>
+    <div class="insight-item">
+      <div class="insight-label">招聘渠道</div>
+      <div class="insight-value">${social} / ${campus}</div>
+      <div class="mini-progress"><span style="width:${socialPercent}%;"></span></div>
+      <div class="insight-note">社招 ${social}人 · 校招 ${campus}人</div>
+    </div>
+  `;
+}
+
+function renderTeamHealth(list) {
+  const host = document.getElementById('teamHealthGrid');
+  const total = list.length;
+  const keyTalent = list.filter(t => t.category === 'keyTalent').length;
+  const highPotential = list.filter(t => t.category === 'highPotential').length;
+  const successor = list.filter(t => t.category === 'successor').length;
+  const riskCount = list.filter(t => t.risk && !/无|暂无|较低/.test(t.risk)).length;
+  const readiness = Math.round(average(list, t => t.scores.readiness));
+  host.innerHTML = `
+    <div class="insight-item">
+      <div class="insight-label">当前人才规模</div>
+      <div class="insight-value">${total}人</div>
+      <div class="insight-note">覆盖当前全部筛选条件</div>
+    </div>
+    <div class="insight-item">
+      <div class="insight-label">关键人才占比</div>
+      <div class="insight-value">${percent(keyTalent, total)}%</div>
+      <div class="mini-progress green"><span style="width:${percent(keyTalent, total)}%;"></span></div>
+      <div class="insight-note">${keyTalent}/${total} 位为关键人才</div>
+    </div>
+    <div class="insight-item">
+      <div class="insight-label">继任准备度</div>
+      <div class="insight-value">${percent(successor, total)}%</div>
+      <div class="mini-progress purple"><span style="width:${percent(successor, total)}%;"></span></div>
+      <div class="insight-note">${successor}位继任人才 · ${highPotential}位高潜人才</div>
+    </div>
+    <div class="insight-item">
+      <div class="insight-label">平均成熟度</div>
+      <div class="insight-value">${readiness}分</div>
+      <div class="mini-progress green"><span style="width:${readiness}%;"></span></div>
+      <div class="insight-note">风险关注 ${riskCount}人，建议纳入发展跟进</div>
+    </div>
+  `;
+}
+
+function uniqueValues(list, getter) {
+  return [...new Set(list.map(getter).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'zh-Hans-CN'));
+}
+
+function setSelectOptions(selectId, values, allLabel, currentValue = '') {
+  const select = document.getElementById(selectId);
+  const options = [`<option value="">${allLabel}</option>`]
+    .concat(values.map(value => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`));
+  select.innerHTML = options.join('');
+  select.value = values.includes(currentValue) ? currentValue : '';
+}
+
+function refreshToolbarOptions() {
+  setSelectOptions('departmentFilter', uniqueValues(talents, t => t.department), '全部大部门', departmentFilter);
+  const scoped = departmentFilter ? talents.filter(t => t.department === departmentFilter) : talents;
+  setSelectOptions('subDepartmentFilter', uniqueValues(scoped, t => t.subDepartment), '全部一级部门', subDepartmentFilter);
+  if (subDepartmentFilter && !uniqueValues(scoped, t => t.subDepartment).includes(subDepartmentFilter)) {
+    subDepartmentFilter = '';
+    document.getElementById('subDepartmentFilter').value = '';
+  }
+}
+
+function resetAllFilters() {
+  searchTerm = '';
+  departmentFilter = '';
+  subDepartmentFilter = '';
+  categoryQuickFilter = '';
+  activeFilter = 'all';
+  document.getElementById('searchInput').value = '';
+  document.getElementById('categoryQuickFilter').value = '';
+  document.querySelectorAll('#filterPills .pill').forEach(b => b.classList.remove('active'));
+  document.querySelector('#filterPills .pill[data-filter="all"]')?.classList.add('active');
+  refreshToolbarOptions();
+  applyFilters();
+}
+
 function blankTalent() {
   return normalizeTalent({
     name: '新人才',
     years: 0,
+    age: 30,
+    gender: 'female',
+    department: '发展部',
+    subDepartment: '综合管理部',
     sourceType: 'external',
     channel: 'social',
     channelDetail: '',
@@ -1856,7 +2227,11 @@ function fillAdminForm(index) {
   setValue('talentIndex', index);
   setValue('nameInput', t.name);
   setValue('yearsInput', t.years);
+  setValue('ageInput', t.age);
+  setValue('genderInput', t.gender);
   setValue('roleInput', t.role);
+  setValue('departmentInput', t.department);
+  setValue('subDepartmentInput', t.subDepartment);
   setValue('sourceTypeInput', t.sourceType);
   setValue('channelInput', t.channel);
   setValue('channelDetailInput', t.channelDetail);
@@ -1884,7 +2259,11 @@ function readAdminForm() {
   return normalizeTalent({
     name: document.getElementById('nameInput').value,
     years: document.getElementById('yearsInput').value,
+    age: document.getElementById('ageInput').value,
+    gender: document.getElementById('genderInput').value,
     role: document.getElementById('roleInput').value,
+    department: document.getElementById('departmentInput').value,
+    subDepartment: document.getElementById('subDepartmentInput').value,
     sourceType: document.getElementById('sourceTypeInput').value,
     channel: document.getElementById('channelInput').value,
     channelDetail: document.getElementById('channelDetailInput').value,
@@ -1909,6 +2288,7 @@ function readAdminForm() {
 
 function refreshDashboard() {
   saveTalents();
+  refreshToolbarOptions();
   renderAdminList();
   fillAdminForm(Math.min(activeTalentIndex, talents.length - 1));
   applyFilters();
@@ -2010,6 +2390,26 @@ document.getElementById('searchInput').addEventListener('input', e => {
   applyFilters();
 });
 
+document.getElementById('departmentFilter').addEventListener('change', e => {
+  departmentFilter = e.target.value;
+  subDepartmentFilter = '';
+  refreshToolbarOptions();
+  applyFilters();
+});
+
+document.getElementById('subDepartmentFilter').addEventListener('change', e => {
+  subDepartmentFilter = e.target.value;
+  applyFilters();
+});
+
+document.getElementById('categoryQuickFilter').addEventListener('change', e => {
+  categoryQuickFilter = e.target.value;
+  applyFilters();
+});
+
+document.getElementById('resetSearchBtn').addEventListener('click', resetAllFilters);
+
+refreshToolbarOptions();
 initAdmin();
 renderAll(talents);
 </script>
